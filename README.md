@@ -18,7 +18,7 @@ cd openbound
 python3 -B tools/validate.py
 ```
 
-The intended canonical repository is `IndelibleVivi/openbound`; publication status is recorded in [current state](docs/current-state.md). The complete installation unit is [skills/openbound](skills/openbound/SKILL.md). See [installation and migration](docs/migration.md) for the installer command using `--repo IndelibleVivi/openbound --path skills/openbound`.
+The canonical repository is `IndelibleVivi/openbound`; publication status is recorded in [current state](docs/current-state.md). The complete installation unit is [skills/openbound](skills/openbound/SKILL.md). See [installation and migration](docs/migration.md) for the installer command using `--repo IndelibleVivi/openbound --path skills/openbound`.
 
 In a compatible Agent Skills host, request:
 
@@ -48,7 +48,7 @@ Inventory proposes tracked files for review. Read the [tool contracts](skills/op
 
 Python 3.10+, Git and POSIX are required. Windows is unsupported. Tools refuse symlinks, special files and symlink ancestors; resolve macOS temporary aliases to real paths. The provider-neutral gate above checks structure and links, all unittest scenarios, and three CLI entry points from a relocated complete Skill. Optional authoring validation: `skill-validate skills/openbound`.
 
-[Validation](docs/validation.md) distinguishes 116 locally observed tests, deterministic scenarios, historical Agent reports and unverified host activation. Tests do not establish reader comprehension or real research effects.
+[Validation](docs/validation.md) distinguishes 117 locally observed tests, deterministic scenarios, historical Agent reports and unverified host activation. Tests do not establish reader comprehension or real research effects.
 
 For a source ZIP, review and stage the intended files, then run `python3 -B tools/package.py --output /absolute/outside-repository/openbound-source.zip`. Packaging selects tracked allowed files, preserves modes and writes the manifest only inside the ZIP. After extraction run `python3 -B tools/check_package.py --manifest`.
 

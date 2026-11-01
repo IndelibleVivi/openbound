@@ -15,6 +15,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 
 PACKAGE = Path(__file__).resolve().parents[1]
@@ -41,7 +42,11 @@ class ScannerRegressions(unittest.TestCase):
         self.commit("initial")
 
     def git(self, *args: str, repo: Path | None = None, data: bytes | None = None) -> str:
-        result = subprocess.run(["git", "-C", str(repo or self.repo), *args],
+        # Fixture writes must finish before any read-only snapshot. Modern Git
+        # commits otherwise spawn detached maintenance that can remove its lock
+        # during the scanner observation, independently of scanner behavior.
+        result = subprocess.run(["git", "-c", "maintenance.auto=false", "-c", "gc.auto=0",
+                                 "-C", str(repo or self.repo), *args],
                                 input=data, capture_output=True, check=True)
         return result.stdout.decode("utf-8", errors="surrogateescape").strip()
 
@@ -284,6 +289,15 @@ class ScannerRegressions(unittest.TestCase):
         incomplete = self.run_scan("--fail-on-findings", "--fail-on-incomplete")
         self.assertEqual(incomplete.returncode, 3)
         self.assertFalse(json.loads(incomplete.stdout)["scan_complete"])
+
+    def test_fixture_commit_does_not_launch_background_maintenance(self) -> None:
+        trace = self.base / "fixture-trace.json"
+        with mock.patch.dict(os.environ, {"GIT_TRACE2_EVENT": str(trace)}):
+            self.git("commit", "--allow-empty", "-q", "-m", "quiescent fixture")
+        events = [json.loads(line) for line in trace.read_text().splitlines()]
+        self.assertTrue(any(event.get("event") == "start" for event in events))
+        children = [event.get("argv", []) for event in events if event.get("event") == "child_start"]
+        self.assertFalse(any("maintenance" in argv or "gc" in argv for argv in children), children)
 
     def test_read_only_scan_does_not_mutate_git_or_source_files(self) -> None:
         def snapshot() -> dict[str, str]:

@@ -3,7 +3,7 @@
 ## 当前公共候选的本机观察
 
 2026-11-01，在本公共候选根目录运行 `python3 -B tools/validate.py`：结构与本地
-链接、116 项 unittest（0 failures/errors/skips）、异地复制后的三个 CLI 均通过。
+链接、117 项 unittest（0 failures/errors/skips）、异地复制后的三个 CLI 均通过。
 环境为 macOS、Python 3.13.3、Git 2.49.0；`skill-validate skills/openbound` 通过。
 
 测试覆盖 Darwin 无覆盖原子 rename、投影恢复/漂移、scanner metadata/shallow/LFS、
@@ -12,6 +12,18 @@
 
 统一入口为测试选择实体临时目录，兼容 macOS 的临时路径别名；产品 no-follow guard
 保持不变。原始日志、位置绑定回执与私人运行材料不提交到本仓库。
+
+## 公共交付与托管检查
+
+仓库已公开并通过匿名 metadata/README 读取。公开 Skill 下载到临时目标后，12 个
+文件与源码逐字节一致，三个 CLI 可从独立 cwd 调用；这不代表全局安装或 Host 激活。
+
+首次托管检查的 Linux/Python 3.10 通过。macOS/Python 3.13 在 read-only 回归中
+观察到 `.git/objects/maintenance.lock` 消失；Git TRACE2 探针确认夹具 commit 会
+启动 detached automatic maintenance。测试 Git helper 现显式禁用 automatic maintenance
+和 auto GC，新增 TRACE2 回归，并保留源文件及全部 `.git` 的原 snapshot 断言。
+产品 scanner 未改变，也没有忽略 lock 或削弱不变性检查。最新托管结果见
+[CI workflow](https://github.com/IndelibleVivi/openbound/actions/workflows/ci.yml)。
 
 ## 四种确定性场景
 
