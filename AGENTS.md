@@ -2,15 +2,15 @@
 
 ## Authority
 
-This repository is the independent canonical OpenBound source, with its own public history. Preserve attribution and rights for reused Public Repo Craft material. The sole
+This repository is the independent canonical OpenBound source, with its own public history. Preserve attribution and applicable rights for reused material. The sole
 active authored Skill is `skills/openbound/`; do not restore the retired root
 `SKILL.md`, root `agents/`, old reference tree, or a second scanner implementation.
 The original scanner in `provenance/baseline/` is a regression fixture only.
 
 An installed Skill is derived state. Change and verify source here first. Source,
 commit, push, installation, discovery and named-host activation are
-separate states. See `docs/current-state.md` and `docs/migration.md` before an
-installation or migration; do not hot-edit an installed copy.
+separate states. See `docs/current-state.md` and `docs/installation.md` before an
+installation or update; do not hot-edit an installed copy.
 
 ## Source owners
 
@@ -66,7 +66,7 @@ fixtures, prior reported Agent trials, source-directed trials, installed discove
 implicit activation and human comprehension must never be reported as equivalent.
 
 Update README for changed usage/support/privacy; AGENTS for canonical paths and
-gates; current-state for source/installation/remote status; migration for install
+gates; current-state for source/installation/remote status; installation for install
 steps; validation for new observations; design and reference contracts for schema
 or behavior changes. Keep private continuity outside tracked docs. When changing
 the diagram, regenerate SVG/Excalidraw and PNG, inspect the actual render and keep

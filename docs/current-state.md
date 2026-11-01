@@ -2,7 +2,7 @@
 
 2026-11-01: [IndelibleVivi/openbound](https://github.com/IndelibleVivi/openbound) is public, with independent `main` history and no fork parent. Repository metadata and README content were read anonymously after publication. No Release, package publication or deployment is claimed.
 
-The canonical installation unit is `skills/openbound/`. The earlier integration source is a one-time migration source; no automatic synchronization is promised.
+The canonical installation unit is `skills/openbound/`. OpenBound is maintained independently in this repository.
 
 This independent source passed its own local gate on macOS: 117 tests, structure/link checks, relocated CLI checks and Skill validation; see [validation](validation.md). Historical Agent trials, deterministic tests and live host activation are distinct.
 

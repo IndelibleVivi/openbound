@@ -4,19 +4,19 @@
 
 ## 1. 当前决定与唯一所有权
 
-本仓库是 OpenBound 的 canonical source，使用独立公共历史。Public Repo Craft 是一次性迁移来源，派生实现与基线见 [PROVENANCE](PROVENANCE.md)；不建立长期投影或自动同步承诺。保留必要来源和权利，不携带私人 Git 历史或工作记录。
+本仓库是 OpenBound 的 canonical source。实现来源与比较基线见 [PROVENANCE](PROVENANCE.md)。源码、安装、Host discovery 与实际交付分别验证。
 
 当前分发单元是一个 Skill：`skills/openbound/`。其中根指令、七份平面 references 和三个 Python 工具构成一个完整产品。它没有常驻服务、数据库、动态模块注册中心、独立四路分类器或强制 intake 表。A/B/C/D 是验收场景，可以在同一任务中组合。
 
-旧根 `SKILL.md`、旧 `agents/openai.yaml` 和旧方法树已从当前源码分支退役。Host 接管是独立步骤：只保留一个完整任务的活动入口，旧 PRC 不能继续竞争隐式任务。具体安装、退役和观察方法见 [migration](docs/migration.md)；当前 installed/activated 与远端状态见 [current-state](docs/current-state.md)。
+完整安装与更新见 [installation](docs/installation.md)；当前安装、激活与远端状态见 [current-state](docs/current-state.md)。
 
 | 能力 | 当前所有者 | 工程决定 |
 | --- | --- | --- |
 | 从私人材料到完整公共成果 | OpenBound | 负责选择对象/承诺、转换、必要设施、验证、交付及继续维护 |
-| 候选秘密与暴露线索检查 | PRC 派生检查器 | 保留现有规则与 Git 对象遍历，修复覆盖、身份和执行边界；不维护第二个扫描器 |
-| 文档权威、读者路径、公共投影的编辑方法 | OpenBound 按需使用 Curator | 无运行依赖，不复制整个 Curator 流水线或其验证器 |
-| 意图、源码、产物、运行证据之间的矛盾 | OpenBound 按需使用 Truth Audit | 采用证据层次判断；其 cited-bytes 工具仍是可选专业工具 |
-| 实施、调查、评审、验证等工程方法 | Servotab 可选 | 同一任务委托与证据继续有效；方法调用不重新授权或接管目标 |
+| 候选秘密与暴露线索检查 | 候选检查器 | 保留现有规则与 Git 对象遍历，修复覆盖、身份和执行边界；不维护第二个扫描器 |
+| 文档权威、读者路径、公共投影的编辑方法 | OpenBound，按需使用已有文档工具 | 保留已有有效材料，不将额外工具设为运行依赖 |
+| 意图、源码、产物、运行证据之间的矛盾 | OpenBound 的定向工程调查 | 按证据层次解决当前矛盾，字节相同不能单独证明结论仍有效 |
+| 实施、调查、评审、验证等工程方法 | 当前 Agent，可复用已有工程方法 | 同一任务委托与证据继续有效；方法调用不重新授权或接管目标 |
 | 外部写入及运行隔离 | 当前 Agent Host 与用户授权 | 包内工具没有远端发布入口，也不假装提供 OS 沙箱 |
 
 ## 2. 产品行为与完成条件
@@ -67,7 +67,7 @@
 | `skills/openbound/SKILL.md` | 单一完整任务入口和默认行为 |
 | `skills/openbound/references/*.md` | 选择/提取、表达、读者与设施、隐私历史、交付、维护、恢复与工具的完整正文 |
 | `skills/openbound/scripts/project_candidate.py` | 显式选择、精确替换、隔离输出、回执和恢复 |
-| `skills/openbound/scripts/inspect_public_candidate.py` | PRC 派生的 Git 候选信号检查；精确补丁同时交付 |
+| `skills/openbound/scripts/inspect_public_candidate.py` | Git 候选信号检查；精确补丁同时交付 |
 | `skills/openbound/scripts/verify_public_work.py` | 经审查命令、临时副本、机制见证、检查范围、身份与证据复用 |
 | `tools/fixture_factory.py` / `tools/run_scenarios.py` | 四种合成输入与可复现的完整本地场景 |
 | `tests/` | 原扫描测试、修复回归、投影/恢复、验证/边界和端到端检查 |
@@ -120,7 +120,7 @@
 
 ## 6. 检查覆盖：三项缺陷的准确修复
 
-继承原脚本的规则与对象读取，实现补丁见 `patches/public-repo-craft-inspector.patch`。它可应用到固定 PRC baseline；`provenance/baseline/inspect_public_candidate.py` 是 byte-exact 原文件，三个回归测试会实际对照旧行为。
+继承原脚本的规则与对象读取，实现补丁见 `patches/inspector-baseline.patch`。它可应用到固定 baseline；`provenance/baseline/inspect_public_candidate.py` 是 byte-exact 原文件，三个回归测试会实际对照旧行为。
 
 | 失效模式 | 当前行为 | 不作出的推论 |
 | --- | --- | --- |
@@ -203,6 +203,6 @@ Agent 根据真实读者路径补必要设施。小 CLI 可能只需要已有 RE
 
 运行 `python3 -B tools/validate.py` 验证结构、链接、代码与异地 Skill CLI；它为测试提供实体临时目录。需要保留候选时运行 `tools/run_scenarios.py`，输出放 Git 外新目录。Agent eval 的 task 与 evaluator-only oracle 分开，新线程只得到 Skill、普通任务和源材料。阅读试验只能称 Agent 盲读，未招募真实目标读者。没有基线控制、重复样本与命名 Host 观察时，不作效率提升或激活准确率宣称。
 
-完成阶段按有价值的整体功能定义：独立源码保留 PRC 派生关系，本地方法与工具、统一检查、迁移说明和可编辑图齐备；本仓库的公共 Git 历史从新根开始。命名 Host 的唯一入口接管及行为观察仍是独立 gate，不能由显式读取 source、CLI smoke 或模型自述替代。远端发布集成依赖实际授权。
+完成阶段按有价值的整体功能定义：独立源码保留必要实现来源，本地方法与工具、统一检查、安装说明和可编辑图齐备；本仓库的公共 Git 历史从新根开始。命名 Host 的 discovery 及行为观察仍是独立 gate，不能由显式读取 source、CLI smoke 或模型自述替代。远端发布集成依赖实际授权。
 
 仍可随真实使用修订的选择包括：是否将巨大资产的专用检查加入绑定协议、哪些反复使用的转换值得变成稳定算子、如何对长期多产物进行累积披露分析、是否需要可控的增量历史缓存，以及公共项目何时终止投影关系。这些不会阻止当前源码运行或迫使每次任务增加程序。

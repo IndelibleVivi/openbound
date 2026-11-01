@@ -2,7 +2,7 @@
 
 No network, dependency installs, credentials, or git-lfs executable are needed.
 The three documented baseline false-completeness cases are exercised against
-the byte-exact pinned Public Repo Craft implementation as well as the extension.
+the byte-exact baseline inspector as well as the current implementation.
 """
 from __future__ import annotations
 

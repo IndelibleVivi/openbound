@@ -10,9 +10,9 @@
 
 从下列线索选择必要检查：真实 token/密钥、个人配置/路径/身份、私人主机/账户/拓扑、内部 URL、客户数据、license/来源、附件元数据，以及多份材料组合揭示的关系。敏感程度由语境决定；示例占位符可能误报，貌似普通的两个公开事实组合也可能敏感。
 
-## 使用继承的检查器，读取覆盖而非绿灯
+## 使用候选检查器，读取覆盖而非绿灯
 
-`inspect_public_candidate.py` 保留 Public Repo Craft 的规则与候选表面检查，扩展明确的对象身份和覆盖记录。示例命令见 `continuation-and-tools.md`。
+`inspect_public_candidate.py` 检查选定的文件与 Git 表面，报告对象身份、规则命中和覆盖缺口。示例命令见 `continuation-and-tools.md`。
 
 审阅报告时一起读：
 

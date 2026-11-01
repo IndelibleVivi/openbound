@@ -4,9 +4,20 @@
 
 **让私人作品成为公众能够理解、使用、检验或继续发展的作品。**
 
-OpenBound 是 Public Repo Craft 的演进：一个完整任务入口，七份按需读取的方法，三个本地 Python 工具。已经成熟的软件可以直接做好公开准备；高度私人化的系统可以提取组件；实验、方法与未完成的构想也可以形成有内容、有证据边界的公共作品。
+OpenBound 是面向作者、研究者和开发者的 Agent Skill：从发展作品、准备公共候选，到验证承诺、完成授权范围内的交付，负责一份完整成果。
 
 公开对象与公共承诺分别决定。完整源码不自动承诺持续维护，Blueprint 不必伪装成可运行的软件。已有正确的代码、文档、测试、许可和 CI 应当保留；实际缺什么，才补什么。
+
+## 可以带来什么？
+
+| 你的起点 | OpenBound 帮你交付什么 |
+| --- | --- |
+| 已经完成、仍带个人配置或开发历史的项目 | 包含可用安装说明、适当示例与行为验证的完整公共候选 |
+| 藏在私人系统里的实用组件 | 依赖明确、来源清楚、有实质测试且可独立使用的组件 |
+| 实验笔记、操作方法或尚未完成的构想 | 机制、依据、开放问题与反驳方式清楚的公共作品 |
+| 正在继续演化的公共作品 | 保留公共贡献、妥善处理与私人源关系的更新候选 |
+
+这些用途可以组合。方法随作品的真实需要展开，不要求每个项目执行同一份清单。
 
 ![OpenBound：一个成果负责人，三个本地工具，私人证据与 Host 交付边界。](docs/architecture.png)
 
@@ -14,7 +25,16 @@ OpenBound 是 Public Repo Craft 的演进：一个完整任务入口，七份按
 
 ## 使用
 
-仓库为 `IndelibleVivi/openbound`，安装与迁移见 [migration](docs/migration.md)。源码可见不代表授予通用使用许可；参见 [许可状态](LICENSE-STATUS.md)。
+仓库为 `IndelibleVivi/openbound`，安装与更新见 [installation](docs/installation.md)。源码可见不代表授予通用使用许可；参见 [许可状态](LICENSE-STATUS.md)。
+
+在 Codex 中安装完整 Skill：
+
+```bash
+python3 "${CODEX_HOME:-$HOME/.codex}/skills/.system/skill-installer/scripts/install-skill-from-github.py" \
+  --repo IndelibleVivi/openbound --path skills/openbound --name openbound --ref main --method download
+```
+
+固定已审查版本、更新、其他 Host 与 discovery 见 [安装指南](docs/installation.md)。
 
 安装单元为 [skills/openbound/](skills/openbound/SKILL.md)。在支持 Agent Skills 的 Host 中加载它，例如：
 
@@ -24,9 +44,9 @@ OpenBound 是 Public Repo Craft 的演进：一个完整任务入口，七份按
 完成本地验证；远端动作沿用本次任务已有的授权。
 ```
 
-也可以要求它从私人系统提取可独立使用的组件，把实验笔记写成可讨论的研究作品，或更新既有公共投影。A/B/C/D 是可以组合的场景，不要求先选择四条路径。普通开发和不涉及私人边界的公共 README 小修改沿用日常工作流。
+也可以要求它从私人系统提取可独立使用的组件，把实验笔记写成可讨论的研究作品，或更新既有公共投影。普通开发和不涉及私人边界的公共 README 小修改沿用日常工作流。
 
-根 Skill 内联成熟项目的直接路径；只有遇到依赖、表达、历史、读者设施、交付或维护的具体问题时，才读取对应 reference。Repo Docs Curator、Repo Truth Audit 和 Servotab 是可选方法，没有运行时依赖。
+根 Skill 内联成熟项目的直接路径；只有遇到依赖、表达、历史、读者设施、交付或维护的具体问题时，才读取对应 reference。已有的文档、架构与工程工具可按需配合，不是运行时依赖。
 
 ## 三个工具
 
@@ -48,7 +68,7 @@ python3 skills/openbound/scripts/project_candidate.py inventory --source /absolu
 
 运行时使用 Python 3.10+ 标准库和 Git，安全文件系统操作要求 POSIX。工具拒绝 symlink 与特殊文件，路径的各级 ancestor 也必须是实体目录；macOS 的 `/tmp`、`/var` 等别名需要先解析为真实路径。Windows 目前不受支持。
 
-从仓库根运行唯一的 provider-neutral 验证入口：
+开发者可先 `git clone https://github.com/IndelibleVivi/openbound.git`、进入 `openbound`，再运行 provider-neutral 验证入口：
 
 ```bash
 python3 -B tools/validate.py
@@ -77,6 +97,6 @@ TMPDIR="$run_root" python3 -B tools/run_scenarios.py --workdir "$run_root/scenar
 - [工程设计](ENGINEERING_DESIGN.md)：所有权、协议、恢复与容量限制。
 - [验证与限制](docs/validation.md)：本机观察与历史报告的区别。
 - [行为验收](evals/ACCEPTANCE.md)：确定性测试、Agent 行为、Host 激活的分层协议。
-- [来源](PROVENANCE.md)与[许可状态](LICENSE-STATUS.md)：PRC 历史、固定基线、派生关系与尚未授予的公共许可。
+- [来源](PROVENANCE.md)与[许可状态](LICENSE-STATUS.md)：实现来源、比较基线、派生关系与尚未授予的公共许可。
 
 修改前阅读 [AGENTS.md](AGENTS.md)。

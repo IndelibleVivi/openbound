@@ -23,7 +23,7 @@ from typing import Any, Iterable, Iterator, Sequence
 
 DEFAULT_MAX_BYTES = 2_000_000
 REPORT_FORMAT = "openbound-inspection/2"
-RULE_VERSION = "prc-patterns+openbound-2026-10-31.1"
+RULE_VERSION = "openbound-patterns-2026-11-01.1"
 
 # A pointer describes a separate object. Reading this text does not read that
 # object, even if git-lfs happens to be installed or the payload is cached.

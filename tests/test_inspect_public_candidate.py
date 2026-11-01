@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-# The 11 Public Repo Craft baseline cases are retained. Only the relocated
+# The 11 original inspector baseline cases are retained. Only the relocated
 # script path and intentional v2 output redaction expectations differ.
 
 import json

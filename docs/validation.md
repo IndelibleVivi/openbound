@@ -18,13 +18,6 @@
 仓库已公开并通过匿名 metadata/README 读取。公开 Skill 下载到临时目标后，12 个
 文件与源码逐字节一致，三个 CLI 可从独立 cwd 调用；这不代表全局安装或 Host 激活。
 
-首次托管检查的 Linux/Python 3.10 通过。macOS/Python 3.13 在 read-only 回归中
-观察到 `.git/objects/maintenance.lock` 消失；Git TRACE2 探针确认夹具 commit 会
-启动 detached automatic maintenance。测试 Git helper 现显式禁用 automatic maintenance
-和 auto GC，新增 TRACE2 回归，并保留源文件及全部 `.git` 的原 snapshot 断言。
-产品 scanner 未改变，也没有忽略 lock 或削弱不变性检查。最新托管结果见
-[CI workflow](https://github.com/IndelibleVivi/openbound/actions/workflows/ci.yml)。
-
 修复后的实现 commit `9cc9be5` 在 [托管运行 41275709057](https://github.com/IndelibleVivi/openbound/actions/runs/41275709057)
 中同时通过 Linux/Python 3.10 与 macOS/Python 3.13 的完整 gate，没有跳过测试。
 
@@ -40,18 +33,15 @@
 `tools/run_scenarios.py` 按程序构造这些结果；C 的文字断言只证明 fixture 一致性。
 这些测试不证明 Agent 创作质量、真实读者理解或现实研究效果。
 
-## 原工程包报告的历史结果
+## 历史 Agent 试验
 
-原工程包报告：Linux / Python 3.12.14 / Git 2.51.1 上 115 项测试通过，四次独立
-source-directed Agent 任务产出候选，C 经一次 Agent 盲读修订；审查后修复了
-Git 转根、外部程序身份失效、大回执读取与 FIFO 阻塞。这些是历史报告，不是本公共候选的新观察；原始私人输出不纳入本仓库。
-
-本轮重新运行的本地工具测试与包作者报告分别记录。没有将历史 Agent 自述当作
-本轮的新盲测，也未重复开展 live model evaluation。
+早期工程报告记录了四次 source-directed Agent 场景试验及一次 Agent 盲读修订。
+它们属于已报告的编辑反馈，不是此版本的新运行、独立受众研究或 Host 激活证据。
+当前确定性测试与这些历史报告分别记录；未重复开展 live model evaluation。
 
 ## 未验证
 
-命名 Host 的隐式 discovery/activation、旧 PRC installed 注册迁移、真实目标读者、
+命名 Host 的隐式 discovery/activation、真实目标读者、
 真实私人业务仓库的完整公开、LFS payload/二进制语义、任意累积披露、敌对文件系统
 并发和所有第三方权利均未因此得到验证。verification runner 不是 OS/网络沙箱；
 freshness 不涵盖所有动态包、硬件或远端服务。原生 Excalidraw Host 交互导入未验证。
