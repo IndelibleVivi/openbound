@@ -1,0 +1,10 @@
+{
+  "schema": "openbound-verification/1",
+  "checks": [
+    {"id": "project-tests", "argv": ["{python}", "-m", "unittest", "discover", "-s", "tests", "-v"], "timeout_seconds": 120},
+    {"id": "public-example", "argv": ["{python}", "-m", "batch_total", "--file", "examples/numbers.txt"], "stdout_json_equals": 6.0}
+  ],
+  "witnesses": [],
+  "dependencies": [],
+  "inspection": {"candidate_mode": "both"}
+}

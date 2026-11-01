@@ -1,0 +1,50 @@
+{
+  "schema": "openbound-diagram/1",
+  "title": "OpenBound — one owner, explicit boundaries",
+  "subtitle": "Current engineering package: selective methods, isolated candidates, reusable evidence, host-owned delivery",
+  "width": 1640,
+  "height": 1040,
+  "regions": [
+    {"id": "task", "label": "ONE TASK · DECISIONS STAY WITH THE AGENT", "x": 40, "y": 110, "w": 1560, "h": 210, "color": "#eef3ff"},
+    {"id": "local", "label": "LOCAL WORK · PRIVATE CONTROL MATERIAL STAYS OUTSIDE THE PUBLIC CANDIDATE", "x": 40, "y": 350, "w": 1560, "h": 420, "color": "#f3f6f7"},
+    {"id": "delivery", "label": "EXTERNAL DELIVERY · SEPARATE USER AUTHORITY AND OBSERVATION", "x": 40, "y": 800, "w": 1560, "h": 200, "color": "#fff6e8"}
+  ],
+  "nodes": [
+    {"id":"user","title":"User commission","lines":["Public object + public promises","Existing authorization"],"x":70,"y":165,"w":280,"h":115,"status":"contract"},
+    {"id":"agent","title":"OpenBound Agent","lines":["Owns the complete outcome","Mature projects stay direct"],"x":420,"y":155,"w":330,"h":130,"status":"implemented-skill"},
+    {"id":"methods","title":"Seven flat references","lines":["Load for an observed obstacle","Return to the same task"],"x":850,"y":155,"w":330,"h":130,"status":"implemented-skill"},
+    {"id":"context","title":"Task context","lines":["Decisions + current evidence","Persist only when useful"],"x":1250,"y":155,"w":290,"h":130,"status":"implemented-skill"},
+    {"id":"source","title":"Private originals","lines":["Code, notes, experiments","Remain unchanged"],"x":70,"y":430,"w":260,"h":110,"status":"observed-input"},
+    {"id":"editor","title":"Agent + projector","lines":["Select, adapt, author","Explicit plan; new output"],"x":400,"y":430,"w":320,"h":110,"status":"implemented"},
+    {"id":"candidate","title":"Public candidate","lines":["Actual files + exact identity","Reviewable local result"],"x":810,"y":430,"w":290,"h":110,"status":"implemented"},
+    {"id":"inspector","title":"Inherited inspector","lines":["Selected trees + metadata","Observed and missing scope"],"x":410,"y":610,"w":310,"h":110,"status":"implemented"},
+    {"id":"verification","title":"Verification runner","lines":["Fresh copy per reviewed check","Witnesses; no OS sandbox"],"x":800,"y":610,"w":310,"h":110,"status":"implemented"},
+    {"id":"receipts","title":"Private evidence","lines":["Content, rules, execution IDs","Reuse only while bindings hold","Never a safety certificate"],"x":1220,"y":550,"w":320,"h":135,"status":"implemented"},
+    {"id":"gate","title":"Host-authorized action","lines":["Commit / push / visibility","Release / package / deploy"],"x":350,"y":855,"w":330,"h":105,"status":"host-provided"},
+    {"id":"remote","title":"Observed external state","lines":["Exact refs, assets, runtime or visibility","Report only the state actually reached"],"x":900,"y":855,"w":450,"h":105,"status":"not-executed-in-package"}
+  ],
+  "edges": [
+    {"id":"authorize","from":"user","to":"agent","points":[[350,212],[420,212]],"label":"goal","labelAt":[368,197]},
+    {"id":"load","from":"agent","to":"methods","points":[[750,195],[850,195]],"label":"trigger","labelAt":[769,181]},
+    {"id":"return","from":"methods","to":"agent","points":[[850,248],[750,248]],"label":"return","labelAt":[770,271]},
+    {"id":"continuity","from":"agent","to":"context","points":[[585,285],[585,305],[1395,305],[1395,285]],"label":"one continuing commission","labelAt":[815,301]},
+    {"id":"selection","from":"source","to":"editor","points":[[330,485],[400,485]],"label":"select","labelAt":[342,469]},
+    {"id":"materialize","from":"editor","to":"candidate","points":[[720,485],[810,485]],"label":"create","labelAt":[738,469]},
+    {"id":"inspect","from":"candidate","to":"inspector","points":[[860,540],[860,575],[565,575],[565,610]],"label":"selected surfaces","labelAt":[596,568],"kind":"evidence"},
+    {"id":"execute","from":"candidate","to":"verification","points":[[965,540],[965,610]],"label":"checks","labelAt":[980,588],"kind":"evidence"},
+    {"id":"scan_receipt","from":"inspector","to":"receipts","points":[[720,665],[752,665],[752,746],[1380,746],[1380,685]],"label":"coverage + rule identity","labelAt":[853,742],"kind":"evidence"},
+    {"id":"test_receipt","from":"verification","to":"receipts","points":[[1110,665],[1160,665],[1160,615],[1220,615]],"label":"results","labelAt":[1147,600],"kind":"evidence"},
+    {"id":"resume","from":"receipts","to":"context","points":[[1540,610],[1580,610],[1580,140],[1395,140],[1395,155]],"kind":"evidence"},
+    {"id":"payload","from":"candidate","to":"gate","points":[[1100,485],[1130,485],[1130,790],[515,790],[515,855]],"label":"candidate payload only","labelAt":[724,785]},
+    {"id":"deliver","from":"gate","to":"remote","points":[[680,908],[900,908]],"label":"when authorized","labelAt":[715,889]}
+  ],
+  "evidence": {
+    "agent":"skills/openbound/SKILL.md",
+    "methods":"skills/openbound/references/",
+    "editor":"skills/openbound/scripts/project_candidate.py",
+    "inspector":"skills/openbound/scripts/inspect_public_candidate.py",
+    "verification":"skills/openbound/scripts/verify_public_work.py",
+    "gate":"skills/openbound/references/delivery.md",
+    "remote":"Host capability; no external writes were performed for this package"
+  }
+}

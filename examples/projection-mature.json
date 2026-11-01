@@ -1,0 +1,18 @@
+{
+  "schema": "openbound-projection/1",
+  "files": [
+    {"source": "README.md", "target": "README.md"},
+    {"source": "LICENSE", "target": "LICENSE"},
+    {"source": "pyproject.toml", "target": "pyproject.toml"},
+    {"source": "src/tool.py", "target": "src/tool.py"},
+    {"source": "tests/test_tool.py", "target": "tests/test_tool.py"},
+    {"source": ".github/workflows/test.yml", "target": ".github/workflows/test.yml"},
+    {
+      "source": "config.example.toml",
+      "target": "config.example.toml",
+      "replacements": [
+        {"old": "https://private-fixture.invalid/service", "new": "http://localhost:8080", "expected_count": 1}
+      ]
+    }
+  ]
+}

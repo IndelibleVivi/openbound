@@ -1,0 +1,14 @@
+{
+  "schema": "openbound-projection/1",
+  "files": [
+    {
+      "source": "system/components/parser.py",
+      "target": "src/parser.py",
+      "replacements": [
+        {"old": "'/home/example/internal'", "new": "None", "expected_count": 1}
+      ]
+    },
+    {"source": "public-drafts/parser-readme.md", "target": "README.md"},
+    {"source": "public-drafts/test_parser.py", "target": "tests/test_parser.py"}
+  ]
+}

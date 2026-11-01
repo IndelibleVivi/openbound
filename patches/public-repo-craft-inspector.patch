@@ -1,0 +1,822 @@
+--- a/scripts/inspect_public_candidate.py
++++ b/scripts/inspect_public_candidate.py
+@@ -9,6 +9,8 @@
+ from __future__ import annotations
+ 
+ import argparse
++from contextlib import contextmanager
++import hashlib
+ import json
+ import os
+ import re
+@@ -20,10 +22,24 @@
+ 
+ 
+ DEFAULT_MAX_BYTES = 2_000_000
++REPORT_FORMAT = "openbound-inspection/2"
++RULE_VERSION = "prc-patterns+openbound-2026-10-31.1"
++
++# A pointer describes a separate object. Reading this text does not read that
++# object, even if git-lfs happens to be installed or the payload is cached.
++LFS_HEADER = b"version https://git-lfs.github.com/spec/v1"
++LFS_OID = re.compile(rb"(?m)^oid sha256:([0-9a-f]{64})\r?$")
++LFS_SIZE = re.compile(rb"(?m)^size ([0-9]+)\r?$")
+ 
+ 
+ class InspectionError(RuntimeError):
+     """Raised when the requested scan cannot be completed reliably."""
++
++
++class PrivateArgumentParser(argparse.ArgumentParser):
++    def error(self, message: str) -> None:
++        # argparse's default message includes the rejected user-supplied value.
++        raise InspectionError("invalid command-line arguments; use --help")
+ 
+ 
+ SECRET_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
+@@ -133,6 +149,64 @@
+     return value.decode("utf-8", errors="surrogateescape")
+ 
+ 
++def _digest(value: Any) -> str:
++    data = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
++    return hashlib.sha256(data.encode("ascii")).hexdigest()
++
++
++def _safe_label(value: str) -> str:
++    """Keep ordinary relative paths useful; suppress obvious value-bearing names.
++
++    This is output hygiene, not a guarantee that relative names are public.
++    Inspection reports remain private working material until explicitly reviewed.
++    """
++    if (any(pattern.search(value) for _, pattern in SECRET_PATTERNS)
++            or any(pattern.search(value) for pattern in MACHINE_LOCAL_PATH_PATTERNS)
++            or any(ord(char) < 32 or ord(char) == 127 for char in value)):
++        return "redacted:" + _digest(value)
++    return value
++
++
++def _git_environment() -> dict[str, str]:
++    # Ambient GIT_DIR/GIT_INDEX_FILE/config injection must not redirect a scan.
++    env = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
++    env.update({
++        "GIT_OPTIONAL_LOCKS": "0", "GIT_NO_LAZY_FETCH": "1",
++        "GIT_NO_REPLACE_OBJECTS": "1", "GIT_TERMINAL_PROMPT": "0",
++        "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull,
++        # Also blocks transport on Git versions which ignore NO_LAZY_FETCH.
++        "GIT_ALLOW_PROTOCOL": "", "GIT_ATTR_NOSYSTEM": "1",
++    })
++    return env
++
++
++def _git_command(root: Path, *args: str) -> list[str]:
++    return [
++        "git", "-c", "core.fsmonitor=false", "-c", "core.hooksPath=" + os.devnull,
++        "-c", "submodule.recurse=false", "-c", "credential.helper=",
++        "-c", "core.askPass=", "-c", "diff.external=", "-c", "log.showSignature=false",
++        "-c", "status.submoduleSummary=false", "-C", str(root), *args,
++    ]
++
++
++def _filter_overrides(root: Path) -> list[str]:
++    # Even `git status` may invoke a clean/process filter. Disable every local
++    # filter before status; neither source programs nor hooks may run in a scan.
++    result = _run_git_bytes(
++        root, "config", "--null", "--name-only", "--get-regexp",
++        r"^filter\..*\.(clean|smudge|process|required)$", allow_failure=True,
++    )
++    overrides: list[str] = []
++    for raw in result.stdout.decode("utf-8", errors="surrogateescape").split("\0"):
++        if not raw:
++            continue
++        if re.fullmatch(r"filter\.[^\r\n=]+\.(?:clean|smudge|process|required)", raw):
++            overrides.extend(["-c", raw + ("=false" if raw.endswith(".required") else "=")])
++        else:
++            raise InspectionError("unsupported repository filter configuration")
++    return overrides
++
++
+ def _run_git_bytes(
+     root: Path,
+     *args: str,
+@@ -141,26 +215,18 @@
+ ) -> subprocess.CompletedProcess[bytes]:
+     try:
+         completed = subprocess.run(
+-            ["git", "-C", str(root), *args],
++            _git_command(root, *(_filter_overrides(root) if args and args[0] == "status" else []), *args),
+             input=stdin,
+             capture_output=True,
+             check=False,
+-            env={
+-                **os.environ,
+-                # Prevent status/index refreshes and partial-clone lazy fetches.
+-                # The inspection must not acquire optional locks, update the
+-                # index, contact a promisor remote, or materialize new objects.
+-                "GIT_OPTIONAL_LOCKS": "0",
+-                "GIT_NO_LAZY_FETCH": "1",
+-            },
++            env=_git_environment(),
+         )
+     except OSError as error:
+-        raise InspectionError(f"unable to execute git: {error}") from error
++        raise InspectionError("unable to execute git") from None
+     if completed.returncode != 0 and not allow_failure:
+-        message = completed.stderr.decode("utf-8", errors="replace").strip()
+-        if not message:
+-            message = completed.stdout.decode("utf-8", errors="replace").strip()
+-        raise InspectionError(message or f"git {' '.join(args)} failed")
++        # Git stderr can contain credentials, raw refs, absolute paths, or
++        # repository-controlled diagnostics. Never copy it into a report/log.
++        raise InspectionError("git read operation failed")
+     return completed
+ 
+ 
+@@ -220,7 +286,13 @@
+             for url in _git_text(root, "remote", "get-url", "--push", "--all", name).splitlines()
+             if url
+         ]
+-        result.append({"name": name, "fetch_urls": fetch, "push_urls": push})
++        result.append({
++            "name": _safe_label(name),
++            "fetch_urls": ["<redacted>" for _ in fetch],
++            "push_urls": ["<redacted>" for _ in push],
++            "fetch_url_ids": [_digest(url) for url in fetch],
++            "push_url_ids": [_digest(url) for url in push],
++        })
+     return result
+ 
+ 
+@@ -254,6 +326,7 @@
+         "--porcelain=v1",
+         "-z",
+         "--untracked-files=all",
++        "--ignore-submodules=all",
+     ).stdout
+     records = raw.split(b"\0")
+     result: list[dict[str, str]] = []
+@@ -313,7 +386,15 @@
+ def _content_rules(text: str, path: str) -> set[str]:
+     rules: set[str] = set()
+     for rule_id, pattern in SECRET_PATTERNS:
+-        if pattern.search(text):
++        matches = list(pattern.finditer(text))
++        if rule_id == "secret.credential-assignment":
++            # Explicit symbolic documentation placeholders are not credentials.
++            # This exception never suppresses a provider-shaped key rule.
++            matches = [match for match in matches if not re.fullmatch(
++                r"(?:YOUR_[A-Z_]+|EXAMPLE_[A-Z_]+|REPLACE_ME|CHANGE_ME)",
++                re.split(r"\s*[:=]\s*[\"']?", match.group(), maxsplit=1)[-1],
++            )]
++        if matches:
+             rules.add(rule_id)
+     if any(pattern.search(text) for pattern in MACHINE_LOCAL_PATH_PATTERNS):
+         rules.add("machine-local-absolute-path")
+@@ -341,6 +422,64 @@
+         return False
+ 
+ 
++@contextmanager
++def _candidate_parent(root: Path, relative: str) -> Iterator[tuple[int, str]]:
++    """Open each ancestor without following symlinks (POSIX dir-fd semantics)."""
++    parts = PurePosixPath(relative).parts
++    if not parts or any(part in {"", ".", ".."} for part in parts) or PurePosixPath(relative).is_absolute():
++        raise InspectionError("unsafe candidate path")
++    if not hasattr(os, "O_NOFOLLOW") or not hasattr(os, "O_DIRECTORY"):
++        raise InspectionError("safe filesystem traversal is unavailable on this platform")
++    descriptors: list[int] = []
++    try:
++        flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
++        descriptor = os.open(root, flags)
++        descriptors.append(descriptor)
++        for part in parts[:-1]:
++            descriptor = os.open(part, flags, dir_fd=descriptor)
++            descriptors.append(descriptor)
++        yield descriptor, parts[-1]
++    finally:
++        for descriptor in reversed(descriptors):
++            os.close(descriptor)
++
++
++def _candidate_lstat(root: Path, relative: str) -> os.stat_result:
++    with _candidate_parent(root, relative) as (descriptor, basename):
++        return os.stat(basename, dir_fd=descriptor, follow_symlinks=False)
++
++
++def _candidate_readlink(root: Path, relative: str) -> str:
++    with _candidate_parent(root, relative) as (descriptor, basename):
++        return os.readlink(basename, dir_fd=descriptor)
++
++
++def _candidate_bytes(root: Path, relative: str, max_bytes: int) -> tuple[bytes, str, int, int]:
++    """Read once: bounded text sample plus a full streaming content identity."""
++    with _candidate_parent(root, relative) as (descriptor, basename):
++        fd = os.open(basename, os.O_RDONLY | os.O_NOFOLLOW, dir_fd=descriptor)
++    with os.fdopen(fd, "rb") as stream:
++        before = os.fstat(stream.fileno())
++        if not stat.S_ISREG(before.st_mode):
++            raise InspectionError("candidate changed type during inspection")
++        digest = hashlib.sha256()
++        sample = bytearray()
++        size = 0
++        while True:
++            chunk = stream.read(1024 * 1024)
++            if not chunk:
++                break
++            digest.update(chunk)
++            size += len(chunk)
++            if len(sample) <= max_bytes:
++                sample.extend(chunk[:max_bytes + 1 - len(sample)])
++        after = os.fstat(stream.fileno())
++        if ((before.st_ino, before.st_size, before.st_mtime_ns, before.st_ctime_ns)
++                != (after.st_ino, after.st_size, after.st_mtime_ns, after.st_ctime_ns)):
++            raise InspectionError("candidate changed while being read")
++        return bytes(sample), digest.hexdigest(), size, stat.S_IMODE(before.st_mode)
++
++
+ def _index_entries(root: Path) -> dict[str, tuple[str, str]]:
+     output = _run_git_bytes(root, "ls-files", "--stage", "-z").stdout
+     result: dict[str, tuple[str, str]] = {}
+@@ -362,16 +501,52 @@
+ 
+ 
+ def _resolve_commit(root: Path, requested_ref: str, label: str) -> str:
++    _validate_ref(requested_ref, label)
+     result = _run_git_bytes(
+         root,
+         "rev-parse",
+         "--verify",
++        "--end-of-options",
+         f"{requested_ref}^{{commit}}",
+         allow_failure=True,
+     )
+     if result.returncode != 0:
+-        raise InspectionError(f"{label} does not resolve to a commit: {requested_ref}")
+-    return result.stdout.decode("ascii", errors="replace").strip()
++        raise InspectionError(f"{label} does not resolve to a commit")
++    oid = result.stdout.decode("ascii", errors="replace").strip()
++    if not re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", oid):
++        raise InspectionError("git returned an invalid object identity")
++    return oid
++
++
++def _validate_ref(requested_ref: str, label: str) -> None:
++    if (not requested_ref or requested_ref.startswith("-") or ".." in requested_ref
++            or ":" in requested_ref or any(char.isspace() or ord(char) < 32 or ord(char) == 127
++                                          for char in requested_ref)):
++        raise InspectionError(f"{label} is not a single commit-ish")
++
++
++def _lfs_pointer(data: bytes) -> dict[str, Any] | None:
++    if not data.startswith(LFS_HEADER):
++        return None
++    oid, size = LFS_OID.search(data), LFS_SIZE.search(data)
++    # A malformed pointer-like file is also not evidence of a payload scan.
++    valid_size = bool(size and len(size.group(1)) <= 20)
++    return {
++        "valid_pointer": bool(oid and valid_size),
++        "oid": "sha256:" + oid.group(1).decode("ascii") if oid else None,
++        "size": int(size.group(1)) if valid_size and size else None,
++        "payload_observed": False,
++    }
++
++
++def _record_lfs(data: bytes, relative: str, scope: str,
++                findings: set[tuple[str, str, str]], skipped: dict[str, int]) -> None:
++    pointer = _lfs_pointer(data)
++    if pointer is not None:
++        skipped["lfs_payload"] = skipped.get("lfs_payload", 0) + 1
++        _add_findings(findings, {"lfs-payload-unobserved"}, relative, scope)
++        if not pointer["valid_pointer"]:
++            _add_findings(findings, {"malformed-lfs-pointer"}, relative, scope)
+ 
+ 
+ def _tree_entries(root: Path, commit: str) -> dict[str, tuple[str, str]]:
+@@ -449,7 +624,10 @@
+                 skipped,
+             )
+ 
+-    return {"enabled": True, "counts": counts, "skipped": skipped}
++    return {
++        "enabled": True, "counts": counts, "skipped": skipped,
++        "identity": {"kind": "git-path-mode-oid/1", "sha256": _digest(sorted(entries.items()))},
++    }
+ 
+ 
+ def _record_candidate_bytes(
+@@ -461,6 +639,7 @@
+     counts: dict[str, int],
+     skipped: dict[str, int],
+ ) -> None:
++    _record_lfs(data, relative, scope, findings, skipped)
+     if len(data) > max_bytes:
+         skipped["large"] += 1
+         return
+@@ -498,24 +677,27 @@
+         "symlinks_checked": 0,
+     }
+     skipped = {"binary": 0, "large": 0, "missing": 0, "nonregular": 0}
++    bindings: list[Any] = []
+ 
+     for relative in inventory:
+         path = root / relative
+         try:
+-            metadata = path.lstat()
++            metadata = _candidate_lstat(root, relative)
+         except FileNotFoundError:
+             if relative in deleted_paths:
+                 # An actual working-tree deletion is not in the proposed
+                 # current tree. Sparse/skip-worktree absence has no deletion
+                 # status and must be scanned from the index instead.
+                 skipped["missing"] += 1
++                bindings.append([relative, "deleted"])
+                 continue
+             entry = index_entries.get(relative) if relative in tracked else None
+             if entry is None:
+                 raise InspectionError(
+-                    f"listed candidate path is unavailable for inspection: {relative!r}"
++                    "listed candidate path is unavailable for inspection"
+                 )
+             mode, oid = entry
++            bindings.append([relative, "index-fallback", mode, oid])
+             _add_findings(findings, _path_rules(relative), relative, "working-tree")
+             object_type, object_size = _object_metadata(root, [oid]).get(
+                 oid, ("missing", 0)
+@@ -556,18 +738,19 @@
+             )
+             continue
+         except OSError as error:
+-            raise InspectionError(f"unable to inspect candidate path {relative!r}: {error}") from error
++            raise InspectionError("unable to inspect candidate path without following ancestors") from None
+ 
+         _add_findings(findings, _path_rules(relative), relative, "working-tree")
+ 
+         if stat.S_ISLNK(metadata.st_mode):
+             counts["symlinks_checked"] += 1
+             try:
+-                link_target = os.readlink(path)
++                link_target = _candidate_readlink(root, relative)
++                bindings.append([relative, "symlink", hashlib.sha256(os.fsencode(link_target)).hexdigest()])
+             except OSError as error:
+                 raise InspectionError(
+-                    f"unable to read symlink target {relative!r}: {error}"
+-                ) from error
++                    "unable to read symlink target"
++                ) from None
+             if os.path.isabs(link_target):
+                 _add_findings(
+                     findings, {"absolute-symlink"}, relative, "working-tree"
+@@ -593,21 +776,13 @@
+ 
+         if not stat.S_ISREG(metadata.st_mode):
+             skipped["nonregular"] += 1
++            bindings.append([relative, "unobserved-nonregular", metadata.st_mode])
+             continue
+         try:
+-            flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+-            with os.fdopen(os.open(path, flags), "rb") as stream:
+-                opened_metadata = os.fstat(stream.fileno())
+-                if not stat.S_ISREG(opened_metadata.st_mode):
+-                    raise InspectionError(
+-                        f"candidate path changed type during inspection: {relative!r}"
+-                    )
+-                if opened_metadata.st_size > max_bytes:
+-                    skipped["large"] += 1
+-                    continue
+-                data = stream.read(max_bytes + 1)
++            data, content_digest, size, mode = _candidate_bytes(root, relative, max_bytes)
++            bindings.append([relative, "file", mode, size, content_digest])
+         except OSError as error:
+-            raise InspectionError(f"unable to read candidate path {relative!r}: {error}") from error
++            raise InspectionError("unable to read candidate path") from None
+         _record_candidate_bytes(
+             data,
+             relative,
+@@ -618,7 +793,10 @@
+             skipped,
+         )
+ 
+-    return {"enabled": True, "counts": counts, "skipped": skipped}
++    return {
++        "enabled": True, "counts": counts, "skipped": skipped,
++        "identity": {"kind": "observed-path-mode-content-sha256/1", "sha256": _digest(bindings)},
++    }
+ 
+ 
+ def _historical_blob_paths(
+@@ -639,6 +817,8 @@
+         "--raw",
+         "--no-renames",
+         "--no-abbrev",
++        "--no-ext-diff",
++        "--no-textconv",
+         "--root",
+         "-m",
+         "-z",
+@@ -727,23 +907,24 @@
+     return b"".join(chunks)
+ 
+ 
+-def _read_blobs(root: Path, object_ids: Sequence[str]) -> Iterator[tuple[str, bytes]]:
++def _read_blobs(
++    root: Path,
++    object_ids: Sequence[str],
++    object_types: tuple[str, ...] = ("blob",),
++) -> Iterator[tuple[str, bytes]]:
++    """Reuse one read-only cat-file transport for blobs or raw metadata."""
+     if not object_ids:
+         return
+     try:
+         process = subprocess.Popen(
+-            ["git", "-C", str(root), "cat-file", "--batch"],
++            _git_command(root, "cat-file", "--batch"),
+             stdin=subprocess.PIPE,
+             stdout=subprocess.PIPE,
+             stderr=subprocess.PIPE,
+-            env={
+-                **os.environ,
+-                "GIT_OPTIONAL_LOCKS": "0",
+-                "GIT_NO_LAZY_FETCH": "1",
+-            },
++            env=_git_environment(),
+         )
+     except OSError as error:
+-        raise InspectionError(f"unable to execute git cat-file: {error}") from error
++        raise InspectionError("unable to execute git cat-file") from None
+     assert process.stdin is not None
+     assert process.stdout is not None
+     assert process.stderr is not None
+@@ -753,9 +934,11 @@
+             process.stdin.flush()
+             header = process.stdout.readline()
+             parts = header.decode("ascii", errors="replace").strip().split()
+-            if len(parts) != 3 or parts[1] != "blob":
+-                raise InspectionError("git returned invalid blob data")
++            if len(parts) != 3 or parts[1] not in object_types:
++                raise InspectionError("git returned invalid object data")
+             returned_oid, _, raw_size = parts
++            if returned_oid != requested_oid:
++                raise InspectionError("git returned an unexpected blob identity")
+             try:
+                 size = int(raw_size)
+             except ValueError as error:
+@@ -771,9 +954,77 @@
+             pass
+         stderr = process.stderr.read()
+         returncode = process.wait()
++        process.stdout.close()
++        process.stderr.close()
+         if returncode != 0 and sys.exc_info()[0] is None:
+-            message = stderr.decode("utf-8", errors="replace").strip()
+-            raise InspectionError(message or "git cat-file failed")
++            raise InspectionError("git cat-file failed")
++
++
++def _scan_metadata(
++    root: Path,
++    requested_ref: str,
++    commits: Sequence[str],
++    max_bytes: int,
++    findings: set[tuple[str, str, str]],
++    scope: str,
++) -> dict[str, Any]:
++    """Scan raw commit headers/messages and the explicitly selected tag chain.
++
++    Raw objects retain messages, names and encoding declarations exactly; Git
++    pretty formats could silently replace bytes or omit metadata. Other tags
++    and refs are not implicitly selected merely because they target a commit.
++    """
++    raw = _run_git_bytes(root, "rev-parse", "--verify", "--end-of-options", requested_ref).stdout
++    selected = raw.decode("ascii", errors="replace").strip()
++    if not re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", selected):
++        raise InspectionError("git returned an invalid selected object identity")
++    if commits and _resolve_commit(root, selected, "selected object") != commits[0]:
++        raise InspectionError("selected ref changed during inspection")
++    pending = list(dict.fromkeys([selected, *commits]))
++    seen: set[str] = set()
++    counts = {"commit_objects_scanned": 0, "tag_objects_scanned": 0}
++    skipped = {"metadata_large": 0, "metadata_non_utf8": 0, "metadata_missing": 0}
++    bindings: list[list[Any]] = []
++    while pending:
++        batch = sorted(set(pending) - seen)
++        pending = []
++        seen.update(batch)
++        metadata = _object_metadata(root, batch)
++        readable: list[str] = []
++        for oid in batch:
++            kind, size = metadata.get(oid, ("missing", 0))
++            if kind not in {"commit", "tag"}:
++                if kind == "missing":
++                    skipped["metadata_missing"] += 1
++                continue
++            bindings.append([oid, kind, size])
++            if size > max_bytes:
++                skipped["metadata_large"] += 1
++                continue
++            readable.append(oid)
++        for oid, data in _read_blobs(root, readable, object_types=("commit", "tag")):
++            kind, size = metadata[oid]
++            if len(data) != size:
++                raise InspectionError("git returned inconsistent metadata size")
++            try:
++                text = data.decode("utf-8")
++            except UnicodeDecodeError:
++                # Preserve ASCII-rule detection, but never claim full decoded text.
++                text = data.decode("utf-8", errors="replace")
++                skipped["metadata_non_utf8"] += 1
++            counts[kind + "_objects_scanned"] += 1
++            _add_findings(findings, _content_rules(text, ""), kind + ":" + oid, scope)
++            if kind == "tag":
++                target = re.match(rb"object ([0-9a-f]{40}|[0-9a-f]{64})\n", data)
++                if target is None:
++                    raise InspectionError("invalid tag metadata")
++                pending.append(target.group(1).decode("ascii"))
++    return {
++        "enabled": True, "counts": counts, "skipped": skipped,
++        "identity": {"kind": "git-metadata-objects/1", "sha256": _digest(sorted(bindings))},
++        "selected_object": selected,
++        "selection": "selected commit objects and explicitly selected annotated tag chain",
++    }
+ 
+ 
+ def _scan_history(
+@@ -803,13 +1054,28 @@
+         "binary": 0,
+         "large": len(blobs) - len(small_blobs),
+         "without_path": 0,
+-    }
++        "missing_object": sum(1 for oid in object_ids if metadata.get(oid, ("missing", 0))[0] == "missing"),
++    }
++
++    shallow = _git_text(root, "rev-parse", "--is-shallow-repository").strip() == "true"
++    if shallow:
++        # This is a coverage boundary, regardless of whether a visible commit
++        # happens to contain a match. Never fetch to repair it during inspection.
++        skipped["shallow_boundary"] = 1
++    graft_path = Path(_git_text(root, "rev-parse", "--git-path", "info/grafts").strip())
++    if not graft_path.is_absolute():
++        graft_path = root / graft_path
++    grafted = graft_path.is_file() and graft_path.stat().st_size > 0
++    if grafted:
++        skipped["grafted_ancestry"] = 1
+ 
+     for oid, data in _read_blobs(root, small_blobs):
+         paths = blob_paths.get(oid)
+         if not paths:
+             skipped["without_path"] += 1
+             continue
++        for path in paths:
++            _record_lfs(data, path, "history", findings, skipped)
+         if b"\0" in data:
+             skipped["binary"] += 1
+             continue
+@@ -822,12 +1088,23 @@
+         for path in paths:
+             _add_findings(findings, _content_rules(text, path), path, "history")
+ 
++    metadata_scan = _scan_metadata(
++        root, requested_ref,
++        [commit, *[oid for oid in object_ids if metadata.get(oid, (None, 0))[0] == "commit" and oid != commit]],
++        max_bytes, findings, "history-metadata",
++    )
++    skipped.update(metadata_scan["skipped"])
++
+     return {
+         "enabled": True,
+-        "requested_ref": requested_ref,
++        "requested_ref": _safe_label(requested_ref),
+         "resolved_commit": commit,
+         "counts": counts,
+         "skipped": skipped,
++        "repository_shallow": shallow,
++        "repository_grafted": grafted,
++        "metadata": metadata_scan,
++        "identity": {"kind": "reachable-git-object-set/1", "sha256": _digest(sorted(object_ids))},
+     }
+ 
+ 
+@@ -886,10 +1163,49 @@
+                 continue
+             if count:
+                 limitations.append(f"{label}.{reason}")
++    if not any(scan["enabled"] for scan in scans.values()):
++        limitations.append("no-content-surface-selected")
+     return sorted(limitations)
+ 
+ 
+-def inspect(
++def _coverage_facets(scans: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
++    facets: list[dict[str, Any]] = []
++    for name, scan in scans.items():
++        selected = scan["enabled"]
++        skipped = {reason: count for reason, count in scan["skipped"].items()
++                   if count and not (name == "working-tree" and reason == "missing")}
++        text_gaps = {reason: count for reason, count in skipped.items()
++                     if not reason.startswith("metadata_") and reason not in {"shallow_boundary", "grafted_ancestry", "lfs_payload"}}
++        facets.extend([
++            {"surface": name + ".paths", "status": "observed" if selected else "not_selected"},
++            {"surface": name + ".content", "status":
++             "not_selected" if not selected else "unobserved" if text_gaps else "observed",
++             "unobserved_reasons": text_gaps,
++             "observation": "UTF-8 text and symlink target bytes evaluated by the listed rules"},
++        ])
++        meta = scan.get("metadata")
++        if name in {"ref", "history"}:
++            gaps = {reason: count for reason, count in (meta or {}).get("skipped", {}).items() if count}
++            facets.append({"surface": name + ".commit-and-selected-tag-metadata", "status":
++                           "not_selected" if not meta else "unobserved" if gaps else "observed",
++                           "unobserved_reasons": gaps})
++        facets.append({"surface": name + ".lfs-payloads", "status":
++                       "unobserved" if skipped.get("lfs_payload") else "not_selected",
++                       "pointer_bindings_observed": skipped.get("lfs_payload", 0),
++                       "observation": "Pointer text does not attest its separately stored object"})
++    history = scans["history"]
++    facets.append({
++        "surface": "history.ancestry", "status": "not_selected" if not history["enabled"] else
++        "unobserved" if history.get("repository_shallow") or history.get("repository_grafted") else "observed",
++        "observation": "Local ancestry of the explicitly selected history ref; no fetch attempted",
++    })
++    for surface in ("ignored-worktree-files", "unselected-refs-and-tags", "remote-release-assets",
++                    "submodule-contents", "human-identity-rights-and-composed-disclosure"):
++        facets.append({"surface": surface, "status": "not_selected"})
++    return facets
++
++
++def _inspect(
+     repo: Path,
+     history_ref: str | None,
+     candidate_ref: str | None,
+@@ -899,7 +1215,7 @@
+     if max_bytes <= 0:
+         raise InspectionError("max bytes must be positive")
+     if candidate_mode not in {"working-tree", "index", "both", "none"}:
+-        raise InspectionError(f"unsupported candidate mode: {candidate_mode}")
++        raise InspectionError("unsupported candidate mode")
+     requested = repo.expanduser().resolve(strict=True)
+     root_text = _git_text(requested, "rev-parse", "--show-toplevel").strip()
+     root = Path(root_text).resolve(strict=True)
+@@ -933,6 +1249,11 @@
+             findings,
+         )
+         ref.update({"requested_ref": candidate_ref, "resolved_commit": resolved_ref})
++        ref["requested_ref"] = _safe_label(candidate_ref)
++        ref["metadata"] = _scan_metadata(
++            root, candidate_ref, [resolved_ref], max_bytes, findings, "ref-metadata",
++        )
++        ref["skipped"].update(ref["metadata"]["skipped"])
+     history = (
+         _scan_history(root, history_ref, max_bytes, findings)
+         if history_ref is not None
+@@ -945,19 +1266,48 @@
+         "ref": ref,
+         "history": history,
+     }
++    if candidate_mode in {"working-tree", "index", "both"}:
++        unmerged = _run_git_bytes(root, "ls-files", "--unmerged", "-z").stdout
++        if unmerged:
++            for name in ("working-tree", "index"):
++                if scans[name]["enabled"]:
++                    scans[name]["skipped"]["unmerged_index"] = 1
++                    scans[name]["unmerged_identity"] = hashlib.sha256(unmerged).hexdigest()
++    for requested_ref, scan in ((candidate_ref, ref), (history_ref, history)):
++        if requested_ref is not None:
++            final_ref = _run_git_bytes(root, "rev-parse", "--verify", "--end-of-options", requested_ref).stdout.decode("ascii").strip()
++            if final_ref != scan["metadata"]["selected_object"]:
++                raise InspectionError("selected ref changed during inspection")
+     coverage_limited_by = _coverage_limitations(scans)
++    surfaces = {
++        name: {"selected": scan["enabled"], "identity": scan.get("identity"),
++               "resolved_commit": scan.get("resolved_commit"),
++               "metadata_identity": scan.get("metadata", {}).get("identity"),
++               "unmerged_identity": scan.get("unmerged_identity")}
++        for name, scan in scans.items()
++    }
++    rules = {"version": RULE_VERSION,
++             "sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
++             "digest_basis": "complete-inspector-implementation"}
+ 
+     ordered_findings = sorted(findings)
+     return {
+         "schema_version": 2,
++        "report_format": REPORT_FORMAT,
+         "inspection_kind": "read-only-publication-candidate-signal-scan",
++        "subject": {
++            "id": "sha256:" + _digest(surfaces), "surfaces": surfaces,
++            "binding": "selected path/content identities and resolved Git objects",
++            "atomic_snapshot": not working_tree["enabled"] and not index["enabled"],
++        },
++        "rules": rules,
+         "repository": {
+-            "root": str(root),
++            "root": "<redacted>",
+             "head": head,
+-            "branch": branch,
++            "branch": _safe_label(branch) if branch else None,
+             "detached": branch is None and head is not None,
+             "clean": not status,
+-            "status": status,
++            "status": [{key: _safe_label(value) for key, value in entry.items()} for entry in status],
+             "remotes": _remote_inventory(root),
+         },
+         "scan_scope": {
+@@ -982,15 +1332,44 @@
+             "history": history["skipped"],
+         },
+         "findings": [
+-            {"rule_id": rule_id, "path": path, "scope": scope}
++            {"rule_id": rule_id, "path": _safe_label(path), "scope": scope}
+             for scope, rule_id, path in ordered_findings
+         ],
+         "scan_complete": not coverage_limited_by,
+         "coverage_limited_by": coverage_limited_by,
++        "coverage": {"facets": _coverage_facets(scans), "limitations": coverage_limited_by},
++        "claims": {
++            "selected_text_surfaces_exhausted": not coverage_limited_by,
++            "no_rule_matches_on_observed_surfaces": bool(any(scan["enabled"] for scan in scans.values())) and not ordered_findings,
++            "publication_ready": False,
++        },
++        "scan_complete_semantics": "Compatibility alias for selected_text_surfaces_exhausted; not a safety or publication claim",
++        "report_handling": "Private review material: relative names and object digests may themselves disclose context",
+         "manual_review_required": True,
+         "readiness_certificate": False,
+         "publication_readiness_claimed": False,
+     }
++
++
++def inspect(
++    repo: Path,
++    history_ref: str | None,
++    candidate_ref: str | None,
++    candidate_mode: str,
++    max_bytes: int,
++) -> dict[str, Any]:
++    """Return deterministic observations or raise a value-free InspectionError.
++
++    No result certifies public safety. A mutable worktree read is not an atomic
++    snapshot; a caller must bind/recheck its candidate before later actions.
++    Safe worktree traversal currently requires POSIX dir-fd/O_NOFOLLOW support.
++    """
++    try:
++        return _inspect(repo, history_ref, candidate_ref, candidate_mode, max_bytes)
++    except InspectionError:
++        raise
++    except (OSError, ValueError):
++        raise InspectionError("filesystem or object data unavailable") from None
+ 
+ 
+ def _print_human(result: dict[str, Any]) -> None:
+@@ -1036,7 +1415,7 @@
+ 
+ 
+ def _build_parser() -> argparse.ArgumentParser:
+-    parser = argparse.ArgumentParser(description=__doc__)
++    parser = PrivateArgumentParser(description=__doc__)
+     parser.add_argument("--repo", required=True, type=Path, help="Git worktree to inspect")
+     parser.add_argument(
+         "--candidate",
+@@ -1050,9 +1429,14 @@
+     )
+     parser.add_argument(
+         "--history-ref",
+-        help="Optional commit-ish whose reachable history blobs should also be scanned",
++        help="Optional commit-ish whose locally reachable history, commit metadata and selected tag chain are scanned",
+     )
+     parser.add_argument("--json", action="store_true", help="Emit structured JSON")
++    parser.add_argument(
++        "--fail-on-incomplete",
++        action="store_true",
++        help="Return exit status 3 for unobserved selected coverage (takes priority over status 1)",
++    )
+     parser.add_argument(
+         "--fail-on-findings",
+         action="store_true",
+@@ -1069,8 +1453,8 @@
+ 
+ def main(argv: Sequence[str] | None = None) -> int:
+     parser = _build_parser()
+-    args = parser.parse_args(argv)
+     try:
++        args = parser.parse_args(argv)
+         result = inspect(
+             args.repo,
+             args.history_ref,
+@@ -1078,13 +1462,18 @@
+             args.candidate,
+             args.max_bytes,
+         )
+-    except (InspectionError, OSError, ValueError) as error:
++    except InspectionError as error:
+         print(f"inspection failed: {error}", file=sys.stderr)
++        return 2
++    except (OSError, ValueError):
++        print("inspection failed: filesystem or object data unavailable", file=sys.stderr)
+         return 2
+     if args.json:
+         print(json.dumps(result, indent=2, sort_keys=True))
+     else:
+         _print_human(result)
++    if args.fail_on_incomplete and not result["scan_complete"]:
++        return 3
+     if args.fail_on_findings and result["findings"]:
+         return 1
+     # By default, findings remain review signals rather than tool failures.

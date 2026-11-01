@@ -1,0 +1,6 @@
+interface:
+  display_name: "OpenBound"
+  short_description: "把私人软件、方法和研究转为可信的公共作品，完成公开准备、交付与持续演化"
+  default_prompt: "请用 $openbound 把这份私人作品发展为适合目标读者的公共成果，完成必要转换、验证和已获授权的交付。"
+policy:
+  allow_implicit_invocation: true

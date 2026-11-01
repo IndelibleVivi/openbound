@@ -1,0 +1,12 @@
+{
+  "schema": "openbound-verification/1",
+  "checks": [
+    {"id": "tests", "argv": ["{python}", "-m", "unittest", "discover", "-s", "tests"]},
+    {"id": "complete", "argv": ["{python}", "witness.py", "complete"]},
+    {"id": "naive", "argv": ["{python}", "witness.py", "naive"]}
+  ],
+  "witnesses": [
+    {"id": "pagination-boundary", "positive": "complete", "negative": "naive", "relation": "different_json"}
+  ],
+  "inspection": {"candidate_mode": "both"}
+}

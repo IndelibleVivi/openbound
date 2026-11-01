@@ -1,0 +1,6 @@
+{
+  "schema": "openbound-verification/1",
+  "checks": [],
+  "witnesses": [],
+  "inspection": {"candidate_mode": "both"}
+}

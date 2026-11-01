@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+.DS_Store
+.env
+.env.*
+!.env.example
+dist/
+build/
+*.egg-info/
+# Raw working evidence belongs outside this repository.
+validation/
+private/
+.private/
+MANIFEST.sha256
