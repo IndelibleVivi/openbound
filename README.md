@@ -2,9 +2,43 @@
 
 English | [简体中文](README.zh-CN.md)
 
-Turn private work into public work that people can understand, use, inspect, or build on. OpenBound is an Agent Skill that develops the work, prepares the public candidate, verifies what it promises, and completes delivery within your authorization.
+**Make a public version of your private project, component or research idea that other people can use, understand and build on.**
 
-Choose the public object and its promises separately. Publishing source does not promise maintenance; a blueprint need not pretend to be executable software. Preserve mature functionality, tests, documentation, licenses, and CI, and address concrete gaps.
+OpenBound is a Skill for your existing agent. You still ask in ordinary language. It gives the agent a reusable method and local tools for choosing what to publish, adapting it to a public audience, checking the result and completing authorized delivery. The output can be a complete project, an independent component or a research blueprint.
+
+## Why use a Skill instead of asking the agent directly?
+
+You can ask directly. A capable agent with a sufficiently complete prompt may do the same work. OpenBound packages that process so you can inspect, reuse and maintain it across tasks. It combines instructions for the agent's judgment with programs for the parts that can be checked mechanically.
+
+Removing private information is one part of making a public work:
+
+| Question | What OpenBound asks the agent to finish |
+| --- | --- |
+| What should become public? | Choose the whole project, a useful component or an explanation, with explicit promises and limits. Full source can carry no maintenance commitment; an unfinished idea can become a blueprint. |
+| Will it work away from the author's machine? | Replace private dependencies with a usable interface or public alternative, provide appropriate examples and check the public entry point from the candidate itself. |
+| Did the transformation preserve what matters? | Keep mature behavior, tests, documentation, licenses and CI; check that synthetic examples still demonstrate the mechanism and that research claims retain their evidence and counterexamples. |
+| What is actually being delivered? | Inspect the selected files and Git surfaces, bind checks to that version, complete authorized delivery and preserve public contributions during later updates. |
+
+The bundled tools can materialize an explicit selection without overwriting unknown output, inspect selected worktree/index/history surfaces and invalidate verification evidence when its inputs change. They do not decide what is worth publishing or certify safety. If you only need a small text redaction or an ordinary public README correction, that usually stays in your normal workflow.
+
+## A concrete example: share a private pagination helper
+
+The repository's [synthetic extraction scenario](tools/run_scenarios.py) starts with a helper that imports a private service client. Its useful behavior is collecting all pages, in order. Hiding the endpoint would leave the reader without that service client.
+
+The prepared public work contains:
+
+- `pager.py`: a small `collect(fetch_batch, limit=8)` interface; the caller supplies the client.
+- `README.md`, a local `witness.py`, tests and the retained fixture license: a reader can run it without the author's private service.
+- A mechanism check: 37 synthetic records with a page limit of 8. Complete traversal returns 37; an intentionally incomplete first-page reader returns 8. Shrinking the example to 5 records erases that distinction, and the witness rejects it.
+
+Inspect the generated work without installing a Skill or calling a model. With Python 3.10+, Git and POSIX available, run from a reviewed checkout:
+
+```bash
+run_root="$(python3 -c 'from pathlib import Path; import tempfile; print(Path(tempfile.mkdtemp(prefix="openbound-")).resolve())')"
+TMPDIR="$run_root" python3 -B tools/run_scenarios.py --workdir "$run_root/scenarios"
+```
+
+Open `$run_root/scenarios/B/public-candidate/README.md` for the component and `$run_root/scenarios/C/public-candidate/README.md` for a research blueprint developed from unfinished notes. All four scenarios are generated in the temporary directory, with private working records kept beside their candidates. The script constructs these works deterministically; it does not demonstrate an agent choosing the right method. There is no controlled result here showing that OpenBound outperforms a direct prompt; see [evidence and limits](docs/validation.md).
 
 ## What can you bring?
 
@@ -16,10 +50,6 @@ Choose the public object and its promises separately. Publishing source does not
 | An existing public work that is changing | An updated candidate that preserves public contributions and respects the relationship with private source |
 
 These uses can combine. The methods expand around the work's actual needs, without requiring every project to follow the same checklist.
-
-![OpenBound architecture](docs/architecture.png)
-
-See the [editable architecture and exports](docs/architecture.md).
 
 ## Get started
 
@@ -46,6 +76,10 @@ history that will actually be exposed. Verify the candidate and complete authori
 Methods load when a concrete uncertainty requires them. Ordinary development or a small public README repair without a private boundary stays in the normal workflow. Optional editing and engineering methods are not runtime dependencies.
 
 ## Local tools
+
+![OpenBound architecture](docs/architecture.png)
+
+See the [editable architecture and exports](docs/architecture.md). The agent owns the complete work; the three tools handle specific mechanical checks.
 
 | Tool | Purpose | Evidence limit |
 | --- | --- | --- |

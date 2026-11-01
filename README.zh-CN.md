@@ -2,11 +2,43 @@
 
 [English](README.md) | 中文
 
-**让私人作品成为公众能够理解、使用、检验或继续发展的作品。**
+**把私人项目、组件和研究构想，做成别人能用、能读、能继续发展的公开作品。**
 
-OpenBound 是面向作者、研究者和开发者的 Agent Skill：从发展作品、准备公共候选，到验证承诺、完成授权范围内的交付，负责一份完整成果。
+OpenBound 是装进现有 Agent 的一份 Skill。你仍然用自然语言提出任务；它给 Agent 一套可复用的方法与本地工具，帮助它决定公开什么、适配公共读者、验证成果，并完成授权范围内的交付。成果可以是完整项目、独立组件，也可以是研究蓝图。
 
-公开对象与公共承诺分别决定。完整源码不自动承诺持续维护，Blueprint 不必伪装成可运行的软件。已有正确的代码、文档、测试、许可和 CI 应当保留；实际缺什么，才补什么。
+## 和直接说“帮我脱敏公开一下”有什么不同？
+
+你当然可以直接说。能力足够、指令足够完整的 Agent，也可能完成同样的工作。OpenBound 把这套做法沉淀成可以查看、复用和维护的 Skill：需要判断的部分交给 Agent，需要确定性检查的部分提供程序。
+
+删除私人信息，是完成公开作品的一部分。还有几件事需要落实：
+
+| 要回答的问题 | OpenBound 要求 Agent 完成什么 |
+| --- | --- |
+| 到底公开什么？ | 判断适合公开完整项目、其中的组件，还是一份解释；明确承诺与限制。完整源码也可以不承诺持续维护；未完成构想可以成为 Blueprint。 |
+| 离开作者的电脑，还能用吗？ | 把私人依赖改为可用的小接口或公共替代，提供适当示例，在实际候选里检查公开入口。 |
+| 转换后，有价值的东西还在吗？ | 保留成熟功能、测试、文档、许可和 CI；检查合成例子是否仍能展示关键机制，研究结论是否仍有对应依据和反例。 |
+| 最终交付的究竟是哪一版？ | 检查所选文件与 Git 表面，把验证绑定到这份成果，完成已有授权的交付，并在后续更新时保留公共贡献。 |
+
+配套工具能按显式选择生成候选、拒绝覆盖陌生输出，检查选定的工作树/index/history，并在验证输入变化后让旧证据失效。它们不判断作品值不值得发表，也不认证安全。单段文字遮盖、普通公共 README 修正等小任务通常沿用日常工作流。
+
+## 看一个具体例子：公开私人系统里的分页器
+
+仓库的[合成提取场景](tools/run_scenarios.py)从一个依赖私人服务客户端的分页器开始。它有价值的行为是按顺序收齐所有页。仅隐藏 endpoint，读者仍然没有那个客户端。
+
+准备出来的公共作品包含：
+
+- `pager.py`：一个小接口 `collect(fetch_batch, limit=8)`，由调用者提供客户端。
+- `README.md`、本地 `witness.py`、测试与保留的 fixture 许可：读者可以脱离作者的私人服务运行它。
+- 机制检查：37 条合成记录、每页上限 8。完整遍历得到 37，只读首页的错误实现得到 8；把例子缩成 5 条就会抹掉这个区别，见证会拒绝这种替换。
+
+不用安装 Skill，也不用调用模型，就能查看生成的作品。准备好 Python 3.10+、Git 和 POSIX 环境后，在已审查的 checkout 运行：
+
+```bash
+run_root="$(python3 -c 'from pathlib import Path; import tempfile; print(Path(tempfile.mkdtemp(prefix="openbound-")).resolve())')"
+TMPDIR="$run_root" python3 -B tools/run_scenarios.py --workdir "$run_root/scenarios"
+```
+
+打开 `$run_root/scenarios/B/public-candidate/README.md` 看独立组件，打开 `$run_root/scenarios/C/public-candidate/README.md` 看从未完成笔记发展出的研究蓝图。命令在临时目录生成全部四类场景，私人工作记录与候选分开保存。作品由脚本确定性构造，不能据此证明 Agent 会正确选方法；目前也没有受控结果证明 OpenBound 比直接 prompt 更好。证据边界见[验证记录](docs/validation.md)。
 
 ## 可以带来什么？
 
@@ -18,10 +50,6 @@ OpenBound 是面向作者、研究者和开发者的 Agent Skill：从发展作�
 | 正在继续演化的公共作品 | 保留公共贡献、妥善处理与私人源关系的更新候选 |
 
 这些用途可以组合。方法随作品的真实需要展开，不要求每个项目执行同一份清单。
-
-![OpenBound：一个成果负责人，三个本地工具，私人证据与 Host 交付边界。](docs/architecture.png)
-
-图的解释、可编辑源与矢量导出见 [architecture](docs/architecture.md)。
 
 ## 使用
 
@@ -52,6 +80,10 @@ python3 -B tools/host_support.py doctor --host claude-code --root /absolute/work
 
 ## 三个工具
 
+![OpenBound：一个成果负责人，三个本地工具，私人证据与 Host 交付边界。](docs/architecture.png)
+
+Agent 负责完整成果，三个工具承担具体的机械检查。图的解释、可编辑源与矢量导出见 [architecture](docs/architecture.md)。
+
 | 工具 | 完成什么 | 证据边界 |
 | --- | --- | --- |
 | `project_candidate.py` | 显式选择与精确替换，隔离新候选、私人回执、重放与中断恢复 | 保护原件，拒绝陌生目标与漂移；不作语义改写或授权判断 |
@@ -80,14 +112,7 @@ python3 -B tools/validate.py
 
 [跨 Host 行为验收](evals/host-trials.md) 提供真实 Agent 的任务准备、产物检查、无 Skill 对照、负向触发及中断恢复命令。确定性结果、原生发现、显式加载、隐式激活与完整成果分别报告；实际观察见 [验证记录](docs/validation.md)。
 
-若需要保留四份完整 synthetic 候选与私人回执用于检查，运行：
-
-```bash
-run_root="$(python3 -c 'from pathlib import Path; import tempfile; print(Path(tempfile.mkdtemp(prefix="openbound-")).resolve())')"
-TMPDIR="$run_root" python3 -B tools/run_scenarios.py --workdir "$run_root/scenarios"
-```
-
-脚本拒绝覆盖已有运行目录。输出不进 Git，不上传到 CI artifact。它是确定性工程演练，不能证明 Agent 编辑质量或 Host 隐式激活。
+上方的场景演示保留完整 synthetic 候选与私人回执；脚本拒绝覆盖已有运行目录。输出不进 Git，不上传到 CI artifact。它是确定性工程演练，不能证明 Agent 编辑质量或 Host 隐式激活。
 
 源 ZIP 使用 `python3 -B tools/package.py --output /absolute/outside-repository/openbound-source.zip` 生成。先审查并 stage 需要交付的文件；打包只收当前受版本控制的允许路径，清单在 ZIP 内生成，不改工作树。解压后用 `python3 -B tools/check_package.py --manifest` 核对产物字节。
 
