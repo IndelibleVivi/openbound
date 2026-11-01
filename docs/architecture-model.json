@@ -1,7 +1,7 @@
 {
   "schema": "openbound-diagram/1",
   "title": "OpenBound — one owner, explicit boundaries",
-  "subtitle": "Current engineering package: selective methods, isolated candidates, reusable evidence, host-owned delivery",
+  "subtitle": "Selective methods, isolated candidates, reusable evidence, host-owned delivery",
   "width": 1640,
   "height": 1040,
   "regions": [
@@ -17,7 +17,7 @@
     {"id":"source","title":"Private originals","lines":["Code, notes, experiments","Remain unchanged"],"x":70,"y":430,"w":260,"h":110,"status":"observed-input"},
     {"id":"editor","title":"Agent + projector","lines":["Select, adapt, author","Explicit plan; new output"],"x":400,"y":430,"w":320,"h":110,"status":"implemented"},
     {"id":"candidate","title":"Public candidate","lines":["Actual files + exact identity","Reviewable local result"],"x":810,"y":430,"w":290,"h":110,"status":"implemented"},
-    {"id":"inspector","title":"Inherited inspector","lines":["Selected trees + metadata","Observed and missing scope"],"x":410,"y":610,"w":310,"h":110,"status":"implemented"},
+    {"id":"inspector","title":"Candidate inspector","lines":["Selected trees + metadata","Observed and missing scope"],"x":410,"y":610,"w":310,"h":110,"status":"implemented"},
     {"id":"verification","title":"Verification runner","lines":["Fresh copy per reviewed check","Witnesses; no OS sandbox"],"x":800,"y":610,"w":310,"h":110,"status":"implemented"},
     {"id":"receipts","title":"Private evidence","lines":["Content, rules, execution IDs","Reuse only while bindings hold","Never a safety certificate"],"x":1220,"y":550,"w":320,"h":135,"status":"implemented"},
     {"id":"gate","title":"Host-authorized action","lines":["Commit / push / visibility","Release / package / deploy"],"x":350,"y":855,"w":330,"h":105,"status":"host-provided"},
@@ -27,17 +27,473 @@
     {"id":"authorize","from":"user","to":"agent","points":[[350,212],[420,212]],"label":"goal","labelAt":[368,197]},
     {"id":"load","from":"agent","to":"methods","points":[[750,195],[850,195]],"label":"trigger","labelAt":[769,181]},
     {"id":"return","from":"methods","to":"agent","points":[[850,248],[750,248]],"label":"return","labelAt":[770,271]},
-    {"id":"continuity","from":"agent","to":"context","points":[[585,285],[585,305],[1395,305],[1395,285]],"label":"one continuing commission","labelAt":[815,301]},
+    {"id":"continuity","from":"agent","to":"context","points":[[585,285],[585,313],[1395,313],[1395,285]],"label":"one continuing commission","labelAt":[815,287]},
     {"id":"selection","from":"source","to":"editor","points":[[330,485],[400,485]],"label":"select","labelAt":[342,469]},
     {"id":"materialize","from":"editor","to":"candidate","points":[[720,485],[810,485]],"label":"create","labelAt":[738,469]},
-    {"id":"inspect","from":"candidate","to":"inspector","points":[[860,540],[860,575],[565,575],[565,610]],"label":"selected surfaces","labelAt":[596,568],"kind":"evidence"},
+    {"id":"inspect","from":"candidate","to":"inspector","points":[[860,540],[860,575],[565,575],[565,610]],"label":"selected surfaces","labelAt":[596,553],"kind":"evidence"},
     {"id":"execute","from":"candidate","to":"verification","points":[[965,540],[965,610]],"label":"checks","labelAt":[980,588],"kind":"evidence"},
-    {"id":"scan_receipt","from":"inspector","to":"receipts","points":[[720,665],[752,665],[752,746],[1380,746],[1380,685]],"label":"coverage + rule identity","labelAt":[853,742],"kind":"evidence"},
+    {"id":"scan_receipt","from":"inspector","to":"receipts","points":[[720,665],[752,665],[752,746],[1380,746],[1380,685]],"label":"coverage + rule identity","labelAt":[853,726],"kind":"evidence"},
     {"id":"test_receipt","from":"verification","to":"receipts","points":[[1110,665],[1160,665],[1160,615],[1220,615]],"label":"results","labelAt":[1147,600],"kind":"evidence"},
     {"id":"resume","from":"receipts","to":"context","points":[[1540,610],[1580,610],[1580,140],[1395,140],[1395,155]],"kind":"evidence"},
-    {"id":"payload","from":"candidate","to":"gate","points":[[1100,485],[1130,485],[1130,790],[515,790],[515,855]],"label":"candidate payload only","labelAt":[724,785]},
+    {"id":"payload","from":"candidate","to":"gate","points":[[1100,485],[1130,485],[1130,795],[20,795],[20,908],[350,908]],"label":"candidate payload only","labelAt":[724,775]},
     {"id":"deliver","from":"gate","to":"remote","points":[[680,908],[900,908]],"label":"when authorized","labelAt":[715,889]}
   ],
+  "accessibility": {
+    "title": "OpenBound ownership and evidence boundaries",
+    "description": "One agent owns the task. Private sources are adapted into an isolated public candidate. Inspector and verification produce private evidence. Only the candidate crosses the host-authorized external delivery boundary."
+  },
+  "translations": {
+    "zh-CN": {
+      "title": "OpenBound：把私人作品带向公共世界",
+      "subtitle": "一个 Agent 负责完整成果，方法、工具与证据围绕同一任务展开",
+      "accessibility": {
+        "title": "OpenBound 的成果责任与证据边界",
+        "description": "Agent 负责完整任务；私人材料经适配成为隔离的公开候选。检查器与验证器产生私人证据，仅候选成果按用户授权通过 Host 对外交付。"
+      },
+      "regions": {
+        "task": {
+          "label": "同一个任务 · 目标、决定与授权保持连续",
+          "x": 40,
+          "y": 150,
+          "w": 1120,
+          "h": 310
+        },
+        "local": {
+          "label": "本地工作 · 构建公开成果，保留私人原件与验证记录",
+          "x": 40,
+          "y": 500,
+          "w": 1120,
+          "h": 570
+        },
+        "delivery": {
+          "label": "外部交付 · 按用户授权执行，按实际结果报告",
+          "x": 40,
+          "y": 1140,
+          "w": 1120,
+          "h": 170
+        }
+      },
+      "nodes": {
+        "user": {
+          "title": "用户委托",
+          "lines": [
+            "公开对象与公共承诺",
+            "已有授权范围"
+          ],
+          "x": 80,
+          "y": 230,
+          "w": 260,
+          "h": 140
+        },
+        "agent": {
+          "title": "OpenBound Agent",
+          "lines": [
+            "负责完整成果",
+            "成熟项目直接推进"
+          ],
+          "x": 460,
+          "y": 230,
+          "w": 280,
+          "h": 140,
+          "color": "#f4f7ff",
+          "border": "#6e8aaf"
+        },
+        "methods": {
+          "title": "七份专题参考",
+          "lines": [
+            "遇到具体阻碍时读取",
+            "作出决定后回到任务"
+          ],
+          "x": 860,
+          "y": 205,
+          "w": 260,
+          "h": 110,
+          "bodyOffset": 44
+        },
+        "context": {
+          "title": "任务上下文",
+          "lines": [
+            "决定与当前有效证据",
+            "按需要保留恢复信息"
+          ],
+          "x": 860,
+          "y": 345,
+          "w": 260,
+          "h": 100,
+          "bodyOffset": 44
+        },
+        "source": {
+          "title": "私人原件",
+          "lines": [
+            "代码、笔记与实验",
+            "保留原件不变"
+          ],
+          "x": 80,
+          "y": 590,
+          "w": 260,
+          "h": 140
+        },
+        "editor": {
+          "title": "转换与创作",
+          "lines": [
+            "Agent 编辑与投影",
+            "显式选择，生成新输出"
+          ],
+          "x": 460,
+          "y": 590,
+          "w": 280,
+          "h": 140
+        },
+        "candidate": {
+          "title": "公开候选成果",
+          "lines": [
+            "实际文件与精确身份",
+            "可审阅的本地成果"
+          ],
+          "x": 860,
+          "y": 590,
+          "w": 260,
+          "h": 140,
+          "color": "#f4f7ff",
+          "border": "#6e8aaf"
+        },
+        "inspector": {
+          "title": "候选检查器",
+          "lines": [
+            "选定文件树与元数据",
+            "观察范围与覆盖缺口"
+          ],
+          "x": 120,
+          "y": 870,
+          "w": 280,
+          "h": 140
+        },
+        "verification": {
+          "title": "验证运行器",
+          "lines": [
+            "每项检查使用新副本",
+            "机制见证；无系统沙箱"
+          ],
+          "x": 460,
+          "y": 870,
+          "w": 280,
+          "h": 140
+        },
+        "receipts": {
+          "title": "私人验证记录",
+          "lines": [
+            "内容、规则与执行身份",
+            "绑定有效时才能复用",
+            "不构成安全证书"
+          ],
+          "x": 860,
+          "y": 850,
+          "w": 260,
+          "h": 160
+        },
+        "gate": {
+          "title": "Host 执行交付",
+          "lines": [
+            "提交 / 推送 / 可见性",
+            "发版 / 包发布 / 部署"
+          ],
+          "x": 80,
+          "y": 1190,
+          "w": 360,
+          "h": 100,
+          "bodyOffset": 44
+        },
+        "remote": {
+          "title": "实际观察到的外部状态",
+          "lines": [
+            "版本、产物、运行与可见性",
+            "只报告真正到达的交付状态"
+          ],
+          "x": 660,
+          "y": 1190,
+          "w": 460,
+          "h": 100,
+          "bodyOffset": 44
+        }
+      },
+      "edges": {
+        "authorize": {
+          "label": "目标",
+          "labelAt": [
+            382,
+            265
+          ],
+          "points": [
+            [
+              340,
+              300
+            ],
+            [
+              460,
+              300
+            ]
+          ]
+        },
+        "load": {
+          "label": "触发",
+          "labelAt": [
+            780,
+            215
+          ],
+          "points": [
+            [
+              740,
+              250
+            ],
+            [
+              860,
+              250
+            ]
+          ]
+        },
+        "return": {
+          "label": "返回",
+          "labelAt": [
+            780,
+            302
+          ],
+          "points": [
+            [
+              860,
+              290
+            ],
+            [
+              740,
+              290
+            ]
+          ]
+        },
+        "continuity": {
+          "label": "同一委托持续推进",
+          "labelAt": [
+            650,
+            374
+          ],
+          "points": [
+            [
+              600,
+              370
+            ],
+            [
+              600,
+              397
+            ],
+            [
+              860,
+              397
+            ]
+          ]
+        },
+        "selection": {
+          "label": "选取",
+          "labelAt": [
+            382,
+            625
+          ],
+          "points": [
+            [
+              340,
+              660
+            ],
+            [
+              460,
+              660
+            ]
+          ]
+        },
+        "materialize": {
+          "label": "生成",
+          "labelAt": [
+            780,
+            625
+          ],
+          "points": [
+            [
+              740,
+              660
+            ],
+            [
+              860,
+              660
+            ]
+          ]
+        },
+        "inspect": {
+          "label": "所选检查面",
+          "labelAt": [
+            365,
+            768
+          ],
+          "points": [
+            [
+              990,
+              730
+            ],
+            [
+              990,
+              800
+            ],
+            [
+              260,
+              800
+            ],
+            [
+              260,
+              870
+            ]
+          ]
+        },
+        "execute": {
+          "label": "检查",
+          "labelAt": [
+            615,
+            815
+          ],
+          "points": [
+            [
+              990,
+              730
+            ],
+            [
+              990,
+              800
+            ],
+            [
+              600,
+              800
+            ],
+            [
+              600,
+              870
+            ]
+          ]
+        },
+        "scan_receipt": {
+          "label": "覆盖范围与规则身份",
+          "labelAt": [
+            530,
+            1012
+          ],
+          "points": [
+            [
+              400,
+              940
+            ],
+            [
+              430,
+              940
+            ],
+            [
+              430,
+              1040
+            ],
+            [
+              990,
+              1040
+            ],
+            [
+              990,
+              1010
+            ]
+          ]
+        },
+        "test_receipt": {
+          "label": "结果",
+          "labelAt": [
+            780,
+            905
+          ],
+          "points": [
+            [
+              740,
+              940
+            ],
+            [
+              860,
+              940
+            ]
+          ]
+        },
+        "payload": {
+          "label": "仅交付候选文件",
+          "labelAt": [
+            520,
+            1072
+          ],
+          "points": [
+            [
+              1120,
+              660
+            ],
+            [
+              1150,
+              660
+            ],
+            [
+              1150,
+              1100
+            ],
+            [
+              20,
+              1100
+            ],
+            [
+              20,
+              1240
+            ],
+            [
+              80,
+              1240
+            ]
+          ]
+        },
+        "deliver": {
+          "label": "获准后执行",
+          "labelAt": [
+            495,
+            1205
+          ],
+          "points": [
+            [
+              440,
+              1240
+            ],
+            [
+              660,
+              1240
+            ]
+          ]
+        },
+        "resume": {
+          "points": [
+            [
+              1120,
+              930
+            ],
+            [
+              1180,
+              930
+            ],
+            [
+              1180,
+              395
+            ],
+            [
+              1120,
+              395
+            ]
+          ]
+        }
+      },
+      "width": 1200,
+      "height": 1340
+    }
+  },
   "evidence": {
     "agent":"skills/openbound/SKILL.md",
     "methods":"skills/openbound/references/",

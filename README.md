@@ -79,7 +79,7 @@ Methods load when a concrete uncertainty requires them. Ordinary development or 
 
 ![OpenBound architecture](docs/architecture.png)
 
-See the [editable architecture and exports](docs/architecture.md). The agent owns the complete work; the three tools handle specific mechanical checks.
+See the [editable architecture and exports](docs/architecture.md), or the [Chinese diagram](docs/architecture.zh-CN.png). The agent owns the complete work; the three tools handle specific mechanical checks.
 
 | Tool | Purpose | Evidence limit |
 | --- | --- | --- |

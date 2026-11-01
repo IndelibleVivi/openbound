@@ -24,7 +24,7 @@ installation or update; do not hot-edit an installed copy.
 | `tools/validate.py` | Provider-neutral verification owner; CI invokes this entry |
 | `tools/host_support.py`, `docs/host-compatibility.md` | Thin install profiles, complete-unit parity and capability reporting; no Host policy changes |
 | `tools/host_trials.py`, `evals/host-trials.md` | Comparable subject fixtures, evaluator-only evidence, outcome checks and recovery; no model launcher |
-| `docs/architecture-model.json` | Editable diagram model; renderer generates SVG and Excalidraw |
+| `docs/architecture-model.json` | Shared diagram topology, translations and per-language layout; renderer generates both SVG/Excalidraw editions |
 | `README.md`, `ENGINEERING_DESIGN.md` | Supported use and design/protocol contracts |
 | `docs/current-state.md`, `docs/validation.md` | Volatile delivery facts and bounded observed evidence |
 
@@ -78,5 +78,6 @@ Update README for changed usage/support/privacy; AGENTS for canonical paths and
 gates; current-state for source/installation/remote status; installation for install
 steps; validation for new observations; design and reference contracts for schema
 or behavior changes. Keep private continuity outside tracked docs. When changing
-the diagram, regenerate SVG/Excalidraw and PNG, inspect the actual render and keep
-the model and exports aligned. Do not claim a source change is released.
+the diagram, regenerate both language editions of SVG/Excalidraw and PNG, inspect
+the actual renders and keep the shared model, semantic IDs and exports aligned.
+Language editions may have different geometry and typography. Do not claim a source change is released.

@@ -27,6 +27,8 @@ git diff --check
 
 ## 公共交付与托管检查
 
+架构图现有中英文两版，拓扑、语义 ID、证据状态与授权边界共用一个模型，中文采用独立布局。SVG 结构、原生连接器绑定、双版节点/边对应、重新生成一致性、重复生成稳定性及缺失翻译拒绝均已核对；PNG 尺寸与各自模型一致，无额外文本、EXIF 或嵌入 scene metadata。已实际查看英文全尺寸，以及中文全尺寸、900px 宽度和灰度渲染；中文版通过 900px 文字尺寸与对比度预检。原生 Excalidraw Host 导入交互仍未验证。
+
 独立公共仓库已通过匿名 metadata/README 读取。既有下载测试确认 canonical Skill 的 12 文件与当时源码逐字节一致；这不证明当前版本已在某个日用 Host 中安装或激活。
 
 基线 `78e3e62` 的 [托管运行 41276820309](https://github.com/IndelibleVivi/openbound/actions/runs/41276820309) 在 Linux/Python 3.10 与 macOS/Python 3.13 通过。它是历史证据，不覆盖后续改动。现有 [Actions](https://github.com/IndelibleVivi/openbound/actions/workflows/ci.yml) 继续调用同一个 `tools/validate.py`；每次结果以实际 commit 和运行记录为准。CI 不启动付费模型任务，也不自动发布产物。

@@ -6,6 +6,8 @@ The canonical installation unit remains `skills/openbound/`: one body, seven ref
 
 The current source adds conservative native install/doctor profiles for six Hosts, private synthetic trial preparation/assessment and recovery records, scanner/verifier no-follow repairs, and a reviewed `execution_path` option. The helpers reuse the existing projector and verification engine; they do not launch models or change Host trust, settings or credentials.
 
+The [architecture](architecture.md) now has English and Chinese SVG, PNG and editable Excalidraw editions. They share one semantic model; Chinese typography and layout are composed for its reading width. The Chinese README uses the Chinese diagram.
+
 Independent integration checks on macOS/Python 3.13.3/Git 2.49.0 passed all 167 tests, structure/links, relocated CLI checks and `skill-validate`. [Validation](validation.md) distinguishes those observations from supplied historical reports and their unverified layers.
 
 [Hosted CI](https://github.com/IndelibleVivi/openbound/actions/workflows/ci.yml) runs the same provider-neutral gate on Linux/Python 3.10 and macOS/Python 3.13. Results belong to the exact commit shown in each run; local success and earlier successful runs do not establish a later commit's result.

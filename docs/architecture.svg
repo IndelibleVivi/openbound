@@ -1,170 +1,146 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1640" height="1040" viewBox="0 0 1640 1040" role="img" aria-labelledby="title description">
-<title id="title">OpenBound ownership and evidence boundaries</title>
-<desc id="description">One agent owns the task. Private sources are adapted into an isolated public candidate. Inspector and verification produce private evidence. Only the candidate crosses the host-authorized external delivery boundary.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1640" height="1040" viewBox="0 0 1640 1040" role="img" lang="en" aria-labelledby="diagram-title diagram-description">
+<title id="diagram-title">OpenBound ownership and evidence boundaries</title>
+<desc id="diagram-description">One agent owns the task. Private sources are adapted into an isolated public candidate. Inspector and verification produce private evidence. Only the candidate crosses the host-authorized external delivery boundary.</desc>
 <defs><marker id="arrow" markerWidth="10" markerHeight="8" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#465369" stroke-width="1.4"/></marker></defs>
-<rect width="100%" height="100%" fill="#ffffff"/>
-<text x="55" y="57" font-family="DejaVu Sans, Arial, sans-serif" font-size="32" font-weight="700" fill="#1d2b3d">
-<tspan x="55" dy="0">OpenBound — one owner, explicit boundaries</tspan>
-</text>
-<text x="57" y="87" font-family="DejaVu Sans, Arial, sans-serif" font-size="17" font-weight="400" fill="#526275">
-<tspan x="57" dy="0">Current engineering package: selective methods, isolated candidates, reusable evidence, host-owned delivery</tspan>
-</text>
+<rect width="1640" height="1040" fill="#ffffff"/>
+<g id="heading">
+<text x="55" y="57.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="32" font-weight="700" fill="#1d2b3d" data-readability="critical">OpenBound — one owner, explicit boundaries</text>
+<text x="57" y="87.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="17" font-weight="400" fill="#526275" data-readability="body">Selective methods, isolated candidates, reusable evidence, host-owned delivery</text>
+</g>
+<g id="task" data-readability-background="#eef3ff">
 <rect x="40" y="110" width="1560" height="210" rx="16" fill="#eef3ff" stroke="#d9e0e8"/>
-<text x="62" y="137" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="700" fill="#465369">
-<tspan x="62" dy="0">ONE TASK · DECISIONS STAY WITH THE AGENT</tspan>
-</text>
+<text x="62" y="137.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="700" fill="#465369" data-readability="supporting">ONE TASK · DECISIONS STAY WITH THE AGENT</text>
+</g>
+<g id="local" data-readability-background="#f3f6f7">
 <rect x="40" y="350" width="1560" height="420" rx="16" fill="#f3f6f7" stroke="#d9e0e8"/>
-<text x="62" y="377" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="700" fill="#465369">
-<tspan x="62" dy="0">LOCAL WORK · PRIVATE CONTROL MATERIAL STAYS OUTSIDE THE PUBLIC CANDIDATE</tspan>
-</text>
+<text x="62" y="377.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="700" fill="#465369" data-readability="supporting">LOCAL WORK · PRIVATE CONTROL MATERIAL STAYS OUTSIDE THE PUBLIC CANDIDATE</text>
+</g>
+<g id="delivery" data-readability-background="#fff6e8">
 <rect x="40" y="800" width="1560" height="200" rx="16" fill="#fff6e8" stroke="#d9e0e8"/>
-<text x="62" y="827" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="700" fill="#465369">
-<tspan x="62" dy="0">EXTERNAL DELIVERY · SEPARATE USER AUTHORITY AND OBSERVATION</tspan>
-</text>
+<text x="62" y="827.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="700" fill="#465369" data-readability="supporting">EXTERNAL DELIVERY · SEPARATE USER AUTHORITY AND OBSERVATION</text>
+</g>
+<g id="authorize">
 <polyline points="350,212 420,212" fill="none" stroke="#465369" stroke-width="1.8" marker-end="url(#arrow)"/>
-<text x="368" y="210" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#465369">
-<tspan x="368" dy="0">goal</tspan>
-</text>
+<text x="368" y="210.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#465369" data-readability="supporting">goal</text>
+</g>
+<g id="load">
 <polyline points="750,195 850,195" fill="none" stroke="#465369" stroke-width="1.8" marker-end="url(#arrow)"/>
-<text x="769" y="194" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#465369">
-<tspan x="769" dy="0">trigger</tspan>
-</text>
+<text x="769" y="194.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#465369" data-readability="supporting">trigger</text>
+</g>
+<g id="return">
 <polyline points="850,248 750,248" fill="none" stroke="#465369" stroke-width="1.8" marker-end="url(#arrow)"/>
-<text x="770" y="284" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#465369">
-<tspan x="770" dy="0">return</tspan>
-</text>
-<polyline points="585,285 585,305 1395,305 1395,285" fill="none" stroke="#465369" stroke-width="1.8" marker-end="url(#arrow)"/>
-<text x="815" y="314" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#465369">
-<tspan x="815" dy="0">one continuing commission</tspan>
-</text>
+<text x="770" y="284.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#465369" data-readability="supporting">return</text>
+</g>
+<g id="continuity">
+<polyline points="585,285 585,313 1395,313 1395,285" fill="none" stroke="#465369" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="815" y="300.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#465369" data-readability="supporting">one continuing commission</text>
+</g>
+<g id="selection">
 <polyline points="330,485 400,485" fill="none" stroke="#465369" stroke-width="1.8" marker-end="url(#arrow)"/>
-<text x="342" y="482" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#465369">
-<tspan x="342" dy="0">select</tspan>
-</text>
+<text x="342" y="482.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#465369" data-readability="supporting">select</text>
+</g>
+<g id="materialize">
 <polyline points="720,485 810,485" fill="none" stroke="#465369" stroke-width="1.8" marker-end="url(#arrow)"/>
-<text x="738" y="482" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#465369">
-<tspan x="738" dy="0">create</tspan>
-</text>
+<text x="738" y="482.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#465369" data-readability="supporting">create</text>
+</g>
+<g id="inspect">
 <polyline points="860,540 860,575 565,575 565,610" fill="none" stroke="#465369" stroke-width="1.8" stroke-dasharray="7 4" marker-end="url(#arrow)"/>
-<text x="596" y="581" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#465369">
-<tspan x="596" dy="0">selected surfaces</tspan>
-</text>
+<text x="596" y="566.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#465369" data-readability="supporting">selected surfaces</text>
+</g>
+<g id="execute">
 <polyline points="965,540 965,610" fill="none" stroke="#465369" stroke-width="1.8" stroke-dasharray="7 4" marker-end="url(#arrow)"/>
-<text x="980" y="601" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#465369">
-<tspan x="980" dy="0">checks</tspan>
-</text>
+<text x="980" y="601.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#465369" data-readability="supporting">checks</text>
+</g>
+<g id="scan_receipt">
 <polyline points="720,665 752,665 752,746 1380,746 1380,685" fill="none" stroke="#465369" stroke-width="1.8" stroke-dasharray="7 4" marker-end="url(#arrow)"/>
-<text x="853" y="755" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#465369">
-<tspan x="853" dy="0">coverage + rule identity</tspan>
-</text>
+<text x="853" y="739.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#465369" data-readability="supporting">coverage + rule identity</text>
+</g>
+<g id="test_receipt">
 <polyline points="1110,665 1160,665 1160,615 1220,615" fill="none" stroke="#465369" stroke-width="1.8" stroke-dasharray="7 4" marker-end="url(#arrow)"/>
-<text x="1147" y="613" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#465369">
-<tspan x="1147" dy="0">results</tspan>
-</text>
+<text x="1147" y="613.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#465369" data-readability="supporting">results</text>
+</g>
+<g id="resume">
 <polyline points="1540,610 1580,610 1580,140 1395,140 1395,155" fill="none" stroke="#465369" stroke-width="1.8" stroke-dasharray="7 4" marker-end="url(#arrow)"/>
-<polyline points="1100,485 1130,485 1130,790 515,790 515,855" fill="none" stroke="#465369" stroke-width="1.8" marker-end="url(#arrow)"/>
-<text x="724" y="798" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#465369">
-<tspan x="724" dy="0">candidate payload only</tspan>
-</text>
+</g>
+<g id="payload">
+<polyline points="1100,485 1130,485 1130,795 20,795 20,908 350,908" fill="none" stroke="#465369" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="724" y="788.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#465369" data-readability="supporting">candidate payload only</text>
+</g>
+<g id="deliver">
 <polyline points="680,908 900,908" fill="none" stroke="#465369" stroke-width="1.8" marker-end="url(#arrow)"/>
-<text x="715" y="902" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#465369">
-<tspan x="715" dy="0">when authorized</tspan>
-</text>
+<text x="715" y="902.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#465369" data-readability="supporting">when authorized</text>
+</g>
+<g id="user" data-readability-background="#ffffff">
 <rect x="70" y="165" width="280" height="115" rx="9" fill="#ffffff" stroke="#8393aa" stroke-width="1.5"/>
-<text x="88" y="200" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#1d2b3d">
-<tspan x="88" dy="0">User commission</tspan>
-</text>
-<text x="88" y="231" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268">
-<tspan x="88" dy="0">Public object + public promises</tspan>
-<tspan x="88" dy="22.4">Existing authorization</tspan>
-</text>
+<text x="88" y="200.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#1d2b3d" data-readability="critical">User commission</text>
+<text x="88" y="231.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268" data-readability="body">Public object + public promises</text>
+<text x="88" y="253.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268" data-readability="body">Existing authorization</text>
+</g>
+<g id="agent" data-readability-background="#ffffff">
 <rect x="420" y="155" width="330" height="130" rx="9" fill="#ffffff" stroke="#8393aa" stroke-width="1.5"/>
-<text x="438" y="190" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#1d2b3d">
-<tspan x="438" dy="0">OpenBound Agent</tspan>
-</text>
-<text x="438" y="221" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268">
-<tspan x="438" dy="0">Owns the complete outcome</tspan>
-<tspan x="438" dy="22.4">Mature projects stay direct</tspan>
-</text>
+<text x="438" y="190.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#1d2b3d" data-readability="critical">OpenBound Agent</text>
+<text x="438" y="221.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268" data-readability="body">Owns the complete outcome</text>
+<text x="438" y="243.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268" data-readability="body">Mature projects stay direct</text>
+</g>
+<g id="methods" data-readability-background="#ffffff">
 <rect x="850" y="155" width="330" height="130" rx="9" fill="#ffffff" stroke="#8393aa" stroke-width="1.5"/>
-<text x="868" y="190" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#1d2b3d">
-<tspan x="868" dy="0">Seven flat references</tspan>
-</text>
-<text x="868" y="221" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268">
-<tspan x="868" dy="0">Load for an observed obstacle</tspan>
-<tspan x="868" dy="22.4">Return to the same task</tspan>
-</text>
+<text x="868" y="190.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#1d2b3d" data-readability="critical">Seven flat references</text>
+<text x="868" y="221.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268" data-readability="body">Load for an observed obstacle</text>
+<text x="868" y="243.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268" data-readability="body">Return to the same task</text>
+</g>
+<g id="context" data-readability-background="#ffffff">
 <rect x="1250" y="155" width="290" height="130" rx="9" fill="#ffffff" stroke="#8393aa" stroke-width="1.5"/>
-<text x="1268" y="190" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#1d2b3d">
-<tspan x="1268" dy="0">Task context</tspan>
-</text>
-<text x="1268" y="221" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268">
-<tspan x="1268" dy="0">Decisions + current evidence</tspan>
-<tspan x="1268" dy="22.4">Persist only when useful</tspan>
-</text>
+<text x="1268" y="190.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#1d2b3d" data-readability="critical">Task context</text>
+<text x="1268" y="221.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268" data-readability="body">Decisions + current evidence</text>
+<text x="1268" y="243.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268" data-readability="body">Persist only when useful</text>
+</g>
+<g id="source" data-readability-background="#ffffff">
 <rect x="70" y="430" width="260" height="110" rx="9" fill="#ffffff" stroke="#8393aa" stroke-width="1.5"/>
-<text x="88" y="465" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#1d2b3d">
-<tspan x="88" dy="0">Private originals</tspan>
-</text>
-<text x="88" y="496" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268">
-<tspan x="88" dy="0">Code, notes, experiments</tspan>
-<tspan x="88" dy="22.4">Remain unchanged</tspan>
-</text>
+<text x="88" y="465.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#1d2b3d" data-readability="critical">Private originals</text>
+<text x="88" y="496.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268" data-readability="body">Code, notes, experiments</text>
+<text x="88" y="518.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268" data-readability="body">Remain unchanged</text>
+</g>
+<g id="editor" data-readability-background="#ffffff">
 <rect x="400" y="430" width="320" height="110" rx="9" fill="#ffffff" stroke="#8393aa" stroke-width="1.5"/>
-<text x="418" y="465" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#1d2b3d">
-<tspan x="418" dy="0">Agent + projector</tspan>
-</text>
-<text x="418" y="496" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268">
-<tspan x="418" dy="0">Select, adapt, author</tspan>
-<tspan x="418" dy="22.4">Explicit plan; new output</tspan>
-</text>
+<text x="418" y="465.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#1d2b3d" data-readability="critical">Agent + projector</text>
+<text x="418" y="496.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268" data-readability="body">Select, adapt, author</text>
+<text x="418" y="518.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268" data-readability="body">Explicit plan; new output</text>
+</g>
+<g id="candidate" data-readability-background="#ffffff">
 <rect x="810" y="430" width="290" height="110" rx="9" fill="#ffffff" stroke="#8393aa" stroke-width="1.5"/>
-<text x="828" y="465" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#1d2b3d">
-<tspan x="828" dy="0">Public candidate</tspan>
-</text>
-<text x="828" y="496" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268">
-<tspan x="828" dy="0">Actual files + exact identity</tspan>
-<tspan x="828" dy="22.4">Reviewable local result</tspan>
-</text>
+<text x="828" y="465.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#1d2b3d" data-readability="critical">Public candidate</text>
+<text x="828" y="496.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268" data-readability="body">Actual files + exact identity</text>
+<text x="828" y="518.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268" data-readability="body">Reviewable local result</text>
+</g>
+<g id="inspector" data-readability-background="#ffffff">
 <rect x="410" y="610" width="310" height="110" rx="9" fill="#ffffff" stroke="#8393aa" stroke-width="1.5"/>
-<text x="428" y="645" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#1d2b3d">
-<tspan x="428" dy="0">Inherited inspector</tspan>
-</text>
-<text x="428" y="676" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268">
-<tspan x="428" dy="0">Selected trees + metadata</tspan>
-<tspan x="428" dy="22.4">Observed and missing scope</tspan>
-</text>
+<text x="428" y="645.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#1d2b3d" data-readability="critical">Candidate inspector</text>
+<text x="428" y="676.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268" data-readability="body">Selected trees + metadata</text>
+<text x="428" y="698.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268" data-readability="body">Observed and missing scope</text>
+</g>
+<g id="verification" data-readability-background="#ffffff">
 <rect x="800" y="610" width="310" height="110" rx="9" fill="#ffffff" stroke="#8393aa" stroke-width="1.5"/>
-<text x="818" y="645" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#1d2b3d">
-<tspan x="818" dy="0">Verification runner</tspan>
-</text>
-<text x="818" y="676" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268">
-<tspan x="818" dy="0">Fresh copy per reviewed check</tspan>
-<tspan x="818" dy="22.4">Witnesses; no OS sandbox</tspan>
-</text>
+<text x="818" y="645.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#1d2b3d" data-readability="critical">Verification runner</text>
+<text x="818" y="676.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268" data-readability="body">Fresh copy per reviewed check</text>
+<text x="818" y="698.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268" data-readability="body">Witnesses; no OS sandbox</text>
+</g>
+<g id="receipts" data-readability-background="#ffffff">
 <rect x="1220" y="550" width="320" height="135" rx="9" fill="#ffffff" stroke="#8393aa" stroke-width="1.5"/>
-<text x="1238" y="585" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#1d2b3d">
-<tspan x="1238" dy="0">Private evidence</tspan>
-</text>
-<text x="1238" y="616" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268">
-<tspan x="1238" dy="0">Content, rules, execution IDs</tspan>
-<tspan x="1238" dy="22.4">Reuse only while bindings hold</tspan>
-<tspan x="1238" dy="22.4">Never a safety certificate</tspan>
-</text>
+<text x="1238" y="585.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#1d2b3d" data-readability="critical">Private evidence</text>
+<text x="1238" y="616.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268" data-readability="body">Content, rules, execution IDs</text>
+<text x="1238" y="638.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268" data-readability="body">Reuse only while bindings hold</text>
+<text x="1238" y="660.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268" data-readability="body">Never a safety certificate</text>
+</g>
+<g id="gate" data-readability-background="#fffdf8">
 <rect x="350" y="855" width="330" height="105" rx="9" fill="#fffdf8" stroke="#8393aa" stroke-width="1.5"/>
-<text x="368" y="890" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#1d2b3d">
-<tspan x="368" dy="0">Host-authorized action</tspan>
-</text>
-<text x="368" y="921" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268">
-<tspan x="368" dy="0">Commit / push / visibility</tspan>
-<tspan x="368" dy="22.4">Release / package / deploy</tspan>
-</text>
+<text x="368" y="890.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#1d2b3d" data-readability="critical">Host-authorized action</text>
+<text x="368" y="921.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268" data-readability="body">Commit / push / visibility</text>
+<text x="368" y="943.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268" data-readability="body">Release / package / deploy</text>
+</g>
+<g id="remote" data-readability-background="#fffdf8">
 <rect x="900" y="855" width="450" height="105" rx="9" fill="#fffdf8" stroke="#8393aa" stroke-width="1.5"/>
-<text x="918" y="890" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#1d2b3d">
-<tspan x="918" dy="0">Observed external state</tspan>
-</text>
-<text x="918" y="921" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268">
-<tspan x="918" dy="0">Exact refs, assets, runtime or visibility</tspan>
-<tspan x="918" dy="22.4">Report only the state actually reached</tspan>
-</text>
+<text x="918" y="890.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#1d2b3d" data-readability="critical">Observed external state</text>
+<text x="918" y="921.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268" data-readability="body">Exact refs, assets, runtime or visibility</text>
+<text x="918" y="943.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#415268" data-readability="body">Report only the state actually reached</text>
+</g>
 </svg>

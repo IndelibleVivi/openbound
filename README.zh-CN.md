@@ -80,9 +80,9 @@ python3 -B tools/host_support.py doctor --host claude-code --root /absolute/work
 
 ## 三个工具
 
-![OpenBound：一个成果负责人，三个本地工具，私人证据与 Host 交付边界。](docs/architecture.png)
+![OpenBound 中文架构：一个 Agent 负责完整成果；私人原件经转换成为公开成果，检查与验证产生私人证据，按用户授权对外交付。](docs/architecture.zh-CN.png)
 
-Agent 负责完整成果，三个工具承担具体的机械检查。图的解释、可编辑源与矢量导出见 [architecture](docs/architecture.md)。
+Agent 负责完整成果，三个工具承担具体的机械检查。图的解释、可编辑源与矢量导出见 [architecture](docs/architecture.md)，也可查看[英文图](docs/architecture.png)。
 
 | 工具 | 完成什么 | 证据边界 |
 | --- | --- | --- |

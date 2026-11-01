@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1340" viewBox="0 0 1200 1340" role="img" lang="zh-CN" aria-labelledby="diagram-title diagram-description">
+<title id="diagram-title">OpenBound 的成果责任与证据边界</title>
+<desc id="diagram-description">Agent 负责完整任务；私人材料经适配成为隔离的公开候选。检查器与验证器产生私人证据，仅候选成果按用户授权通过 Host 对外交付。</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="8" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#465369" stroke-width="1.4"/></marker></defs>
+<rect width="1200" height="1340" fill="#ffffff"/>
+<g id="heading">
+<text x="55" y="63.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="38" font-weight="700" fill="#1d2b3d" data-readability="critical">OpenBound：把私人作品带向公共世界</text>
+<text x="57" y="107.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="22" font-weight="400" fill="#526275" data-readability="body">一个 Agent 负责完整成果，方法、工具与证据围绕同一任务展开</text>
+</g>
+<g id="task" data-readability-background="#eef3ff">
+<rect x="40" y="150" width="1120" height="310" rx="16" fill="#eef3ff" stroke="#d9e0e8"/>
+<text x="62" y="182.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="700" fill="#465369" data-readability="supporting">同一个任务 · 目标、决定与授权保持连续</text>
+</g>
+<g id="local" data-readability-background="#f3f6f7">
+<rect x="40" y="500" width="1120" height="570" rx="16" fill="#f3f6f7" stroke="#d9e0e8"/>
+<text x="62" y="532.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="700" fill="#465369" data-readability="supporting">本地工作 · 构建公开成果，保留私人原件与验证记录</text>
+</g>
+<g id="delivery" data-readability-background="#fff6e8">
+<rect x="40" y="1140" width="1120" height="170" rx="16" fill="#fff6e8" stroke="#d9e0e8"/>
+<text x="62" y="1172.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="700" fill="#465369" data-readability="supporting">外部交付 · 按用户授权执行，按实际结果报告</text>
+</g>
+<g id="authorize">
+<polyline points="340,300 460,300" fill="none" stroke="#465369" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="382" y="283.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="18" font-weight="400" fill="#465369" data-readability="supporting">目标</text>
+</g>
+<g id="load">
+<polyline points="740,250 860,250" fill="none" stroke="#465369" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="780" y="233.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="18" font-weight="400" fill="#465369" data-readability="supporting">触发</text>
+</g>
+<g id="return">
+<polyline points="860,290 740,290" fill="none" stroke="#465369" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="780" y="320.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="18" font-weight="400" fill="#465369" data-readability="supporting">返回</text>
+</g>
+<g id="continuity">
+<polyline points="600,370 600,397 860,397" fill="none" stroke="#465369" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="650" y="392.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="18" font-weight="400" fill="#465369" data-readability="supporting">同一委托持续推进</text>
+</g>
+<g id="selection">
+<polyline points="340,660 460,660" fill="none" stroke="#465369" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="382" y="643.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="18" font-weight="400" fill="#465369" data-readability="supporting">选取</text>
+</g>
+<g id="materialize">
+<polyline points="740,660 860,660" fill="none" stroke="#465369" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="780" y="643.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="18" font-weight="400" fill="#465369" data-readability="supporting">生成</text>
+</g>
+<g id="inspect">
+<polyline points="990,730 990,800 260,800 260,870" fill="none" stroke="#465369" stroke-width="1.8" stroke-dasharray="7 4" marker-end="url(#arrow)"/>
+<text x="365" y="786.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="18" font-weight="400" fill="#465369" data-readability="supporting">所选检查面</text>
+</g>
+<g id="execute">
+<polyline points="990,730 990,800 600,800 600,870" fill="none" stroke="#465369" stroke-width="1.8" stroke-dasharray="7 4" marker-end="url(#arrow)"/>
+<text x="615" y="833.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="18" font-weight="400" fill="#465369" data-readability="supporting">检查</text>
+</g>
+<g id="scan_receipt">
+<polyline points="400,940 430,940 430,1040 990,1040 990,1010" fill="none" stroke="#465369" stroke-width="1.8" stroke-dasharray="7 4" marker-end="url(#arrow)"/>
+<text x="530" y="1030.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="18" font-weight="400" fill="#465369" data-readability="supporting">覆盖范围与规则身份</text>
+</g>
+<g id="test_receipt">
+<polyline points="740,940 860,940" fill="none" stroke="#465369" stroke-width="1.8" stroke-dasharray="7 4" marker-end="url(#arrow)"/>
+<text x="780" y="923.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="18" font-weight="400" fill="#465369" data-readability="supporting">结果</text>
+</g>
+<g id="resume">
+<polyline points="1120,930 1180,930 1180,395 1120,395" fill="none" stroke="#465369" stroke-width="1.8" stroke-dasharray="7 4" marker-end="url(#arrow)"/>
+</g>
+<g id="payload">
+<polyline points="1120,660 1150,660 1150,1100 20,1100 20,1240 80,1240" fill="none" stroke="#465369" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="520" y="1090.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="18" font-weight="400" fill="#465369" data-readability="supporting">仅交付候选文件</text>
+</g>
+<g id="deliver">
+<polyline points="440,1240 660,1240" fill="none" stroke="#465369" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="495" y="1223.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="18" font-weight="400" fill="#465369" data-readability="supporting">获准后执行</text>
+</g>
+<g id="user" data-readability-background="#ffffff">
+<rect x="80" y="230" width="260" height="140" rx="9" fill="#ffffff" stroke="#8393aa" stroke-width="1.5"/>
+<text x="98" y="270.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="26" font-weight="700" fill="#1d2b3d" data-readability="critical">用户委托</text>
+<text x="98" y="308.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#415268" data-readability="body">公开对象与公共承诺</text>
+<text x="98" y="333.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#415268" data-readability="body">已有授权范围</text>
+</g>
+<g id="agent" data-readability-background="#f4f7ff">
+<rect x="460" y="230" width="280" height="140" rx="9" fill="#f4f7ff" stroke="#6e8aaf" stroke-width="1.5"/>
+<text x="478" y="270.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="26" font-weight="700" fill="#1d2b3d" data-readability="critical">OpenBound Agent</text>
+<text x="478" y="308.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#415268" data-readability="body">负责完整成果</text>
+<text x="478" y="333.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#415268" data-readability="body">成熟项目直接推进</text>
+</g>
+<g id="methods" data-readability-background="#ffffff">
+<rect x="860" y="205" width="260" height="110" rx="9" fill="#ffffff" stroke="#8393aa" stroke-width="1.5"/>
+<text x="878" y="245.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="26" font-weight="700" fill="#1d2b3d" data-readability="critical">七份专题参考</text>
+<text x="878" y="269.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#415268" data-readability="body">遇到具体阻碍时读取</text>
+<text x="878" y="294.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#415268" data-readability="body">作出决定后回到任务</text>
+</g>
+<g id="context" data-readability-background="#ffffff">
+<rect x="860" y="345" width="260" height="100" rx="9" fill="#ffffff" stroke="#8393aa" stroke-width="1.5"/>
+<text x="878" y="385.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="26" font-weight="700" fill="#1d2b3d" data-readability="critical">任务上下文</text>
+<text x="878" y="409.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#415268" data-readability="body">决定与当前有效证据</text>
+<text x="878" y="434.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#415268" data-readability="body">按需要保留恢复信息</text>
+</g>
+<g id="source" data-readability-background="#ffffff">
+<rect x="80" y="590" width="260" height="140" rx="9" fill="#ffffff" stroke="#8393aa" stroke-width="1.5"/>
+<text x="98" y="630.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="26" font-weight="700" fill="#1d2b3d" data-readability="critical">私人原件</text>
+<text x="98" y="668.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#415268" data-readability="body">代码、笔记与实验</text>
+<text x="98" y="693.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#415268" data-readability="body">保留原件不变</text>
+</g>
+<g id="editor" data-readability-background="#ffffff">
+<rect x="460" y="590" width="280" height="140" rx="9" fill="#ffffff" stroke="#8393aa" stroke-width="1.5"/>
+<text x="478" y="630.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="26" font-weight="700" fill="#1d2b3d" data-readability="critical">转换与创作</text>
+<text x="478" y="668.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#415268" data-readability="body">Agent 编辑与投影</text>
+<text x="478" y="693.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#415268" data-readability="body">显式选择，生成新输出</text>
+</g>
+<g id="candidate" data-readability-background="#f4f7ff">
+<rect x="860" y="590" width="260" height="140" rx="9" fill="#f4f7ff" stroke="#6e8aaf" stroke-width="1.5"/>
+<text x="878" y="630.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="26" font-weight="700" fill="#1d2b3d" data-readability="critical">公开候选成果</text>
+<text x="878" y="668.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#415268" data-readability="body">实际文件与精确身份</text>
+<text x="878" y="693.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#415268" data-readability="body">可审阅的本地成果</text>
+</g>
+<g id="inspector" data-readability-background="#ffffff">
+<rect x="120" y="870" width="280" height="140" rx="9" fill="#ffffff" stroke="#8393aa" stroke-width="1.5"/>
+<text x="138" y="910.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="26" font-weight="700" fill="#1d2b3d" data-readability="critical">候选检查器</text>
+<text x="138" y="948.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#415268" data-readability="body">选定文件树与元数据</text>
+<text x="138" y="973.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#415268" data-readability="body">观察范围与覆盖缺口</text>
+</g>
+<g id="verification" data-readability-background="#ffffff">
+<rect x="460" y="870" width="280" height="140" rx="9" fill="#ffffff" stroke="#8393aa" stroke-width="1.5"/>
+<text x="478" y="910.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="26" font-weight="700" fill="#1d2b3d" data-readability="critical">验证运行器</text>
+<text x="478" y="948.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#415268" data-readability="body">每项检查使用新副本</text>
+<text x="478" y="973.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#415268" data-readability="body">机制见证；无系统沙箱</text>
+</g>
+<g id="receipts" data-readability-background="#ffffff">
+<rect x="860" y="850" width="260" height="160" rx="9" fill="#ffffff" stroke="#8393aa" stroke-width="1.5"/>
+<text x="878" y="890.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="26" font-weight="700" fill="#1d2b3d" data-readability="critical">私人验证记录</text>
+<text x="878" y="928.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#415268" data-readability="body">内容、规则与执行身份</text>
+<text x="878" y="953.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#415268" data-readability="body">绑定有效时才能复用</text>
+<text x="878" y="978.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#415268" data-readability="body">不构成安全证书</text>
+</g>
+<g id="gate" data-readability-background="#fffdf8">
+<rect x="80" y="1190" width="360" height="100" rx="9" fill="#fffdf8" stroke="#8393aa" stroke-width="1.5"/>
+<text x="98" y="1230.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="26" font-weight="700" fill="#1d2b3d" data-readability="critical">Host 执行交付</text>
+<text x="98" y="1254.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#415268" data-readability="body">提交 / 推送 / 可见性</text>
+<text x="98" y="1279.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#415268" data-readability="body">发版 / 包发布 / 部署</text>
+</g>
+<g id="remote" data-readability-background="#fffdf8">
+<rect x="660" y="1190" width="460" height="100" rx="9" fill="#fffdf8" stroke="#8393aa" stroke-width="1.5"/>
+<text x="678" y="1230.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="26" font-weight="700" fill="#1d2b3d" data-readability="critical">实际观察到的外部状态</text>
+<text x="678" y="1254.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#415268" data-readability="body">版本、产物、运行与可见性</text>
+<text x="678" y="1279.0" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#415268" data-readability="body">只报告真正到达的交付状态</text>
+</g>
+</svg>
