@@ -6,7 +6,7 @@ The canonical installation unit is `skills/openbound/`. The earlier integration 
 
 This independent source passed its own local gate on macOS: 117 tests, structure/link checks, relocated CLI checks and Skill validation; see [validation](validation.md). Historical Agent trials, deterministic tests and live host activation are distinct.
 
-CI invokes `tools/validate.py` on Linux/Python 3.10 and macOS/Python 3.13. The first hosted run passed Linux and exposed a macOS test-fixture background-maintenance race; the fixture now disables automatic maintenance and retains the full read-only assertion. Current hosted results are available in [Actions](https://github.com/IndelibleVivi/openbound/actions/workflows/ci.yml).
+Hosted CI passed `tools/validate.py` on Linux/Python 3.10 and macOS/Python 3.13 for implementation commit `9cc9be5`: [verified run](https://github.com/IndelibleVivi/openbound/actions/runs/41275709057). Current results are available in [Actions](https://github.com/IndelibleVivi/openbound/actions/workflows/ci.yml).
 
 Downloading the public Skill into a disposable destination produced all 12 expected files with byte parity and working CLI entry points. Global installation, discovery and named-host implicit activation remain unverified.
 

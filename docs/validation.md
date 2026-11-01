@@ -25,6 +25,9 @@
 产品 scanner 未改变，也没有忽略 lock 或削弱不变性检查。最新托管结果见
 [CI workflow](https://github.com/IndelibleVivi/openbound/actions/workflows/ci.yml)。
 
+修复后的实现 commit `9cc9be5` 在 [托管运行 41275709057](https://github.com/IndelibleVivi/openbound/actions/runs/41275709057)
+中同时通过 Linux/Python 3.10 与 macOS/Python 3.13 的完整 gate，没有跳过测试。
+
 ## 四种确定性场景
 
 | 场景 | 能够支持的结论 |
