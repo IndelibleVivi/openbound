@@ -426,6 +426,8 @@ def _inside_root(root: Path, target: Path) -> bool:
 def _candidate_parent(root: Path, relative: str) -> Iterator[tuple[int, str]]:
     """Open each ancestor without following symlinks (POSIX dir-fd semantics)."""
     parts = PurePosixPath(relative).parts
+    if not root.is_absolute() or '..' in root.parts:
+        raise InspectionError("unsafe repository path")
     if not parts or any(part in {"", ".", ".."} for part in parts) or PurePosixPath(relative).is_absolute():
         raise InspectionError("unsafe candidate path")
     if not hasattr(os, "O_NOFOLLOW") or not hasattr(os, "O_DIRECTORY"):
@@ -433,9 +435,9 @@ def _candidate_parent(root: Path, relative: str) -> Iterator[tuple[int, str]]:
     descriptors: list[int] = []
     try:
         flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
-        descriptor = os.open(root, flags)
+        descriptor = os.open("/", flags)
         descriptors.append(descriptor)
-        for part in parts[:-1]:
+        for part in (*root.parts[1:], *parts[:-1]):
             descriptor = os.open(part, flags, dir_fd=descriptor)
             descriptors.append(descriptor)
         yield descriptor, parts[-1]
@@ -1216,9 +1218,17 @@ def _inspect(
         raise InspectionError("max bytes must be positive")
     if candidate_mode not in {"working-tree", "index", "both", "none"}:
         raise InspectionError("unsupported candidate mode")
-    requested = repo.expanduser().resolve(strict=True)
+    requested = repo.expanduser()
+    if '..' in requested.parts:
+        raise InspectionError("unsafe repository path")
+    requested = Path(os.path.abspath(requested))
+    # Validate before Git or resolve() can hide a symlinked input ancestor.
+    with _candidate_parent(requested, ".git"):
+        pass
     root_text = _git_text(requested, "rev-parse", "--show-toplevel").strip()
-    root = Path(root_text).resolve(strict=True)
+    root = Path(root_text)
+    with _candidate_parent(root, ".git"):
+        pass
     head, branch = _head_and_branch(root)
     status = _parse_status(root)
     findings: set[tuple[str, str, str]] = set()

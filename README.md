@@ -23,19 +23,22 @@ See the [editable architecture and exports](docs/architecture.md).
 
 ## Get started
 
-Install the complete Skill in Codex:
+Clone this repository, review the selected revision, then install the complete
+Skill into an existing project where your Agent works:
 
 ```bash
-python3 "${CODEX_HOME:-$HOME/.codex}/skills/.system/skill-installer/scripts/install-skill-from-github.py" \
-  --repo IndelibleVivi/openbound --path skills/openbound --name openbound --ref main --method download
+git clone https://github.com/IndelibleVivi/openbound.git
+cd openbound
+python3 -B tools/host_support.py install --host claude-code --root /absolute/work-project
+python3 -B tools/host_support.py doctor --host claude-code --root /absolute/work-project
 ```
 
-See [installation](docs/installation.md) for reviewed refs, updates, other hosts and discovery. The complete unit is [skills/openbound](skills/openbound/SKILL.md). Authors, developers and researchers can use it when private material must become a complete public work with explicit promises and evidence.
+Select `codex`, `claude-code`, `opencode`, `pi`, `gemini-cli` or `cursor`. These are thin installation profiles over one canonical payload. See [installation](docs/installation.md) for reviewed refs, updates and native invocation, and [Host compatibility](docs/host-compatibility.md) for permissions and fallbacks. The complete unit is [skills/openbound](skills/openbound/SKILL.md).
 
 In a compatible Agent Skills host, request:
 
 ```text
-Use $openbound to prepare this completed private project as a complete public candidate.
+Use OpenBound to prepare this completed private project as a complete public candidate.
 Preserve its behavior, tests, and documentation. Address private configuration and the
 history that will actually be exposed. Verify the candidate and complete authorized delivery.
 ```
@@ -60,7 +63,7 @@ Inventory proposes tracked files for review. Read the [tool contracts](skills/op
 
 Python 3.10+, Git and POSIX are required. Windows is unsupported. Tools refuse symlinks, special files and symlink ancestors; resolve macOS temporary aliases to real paths. Clone `https://github.com/IndelibleVivi/openbound.git`, enter the checkout and run `python3 -B tools/validate.py`. This provider-neutral gate checks structure and links, all unittest scenarios, and three CLI entry points from a relocated complete Skill. Optional authoring validation: `skill-validate skills/openbound`.
 
-[Validation](docs/validation.md) distinguishes 117 locally observed tests, deterministic scenarios, historical Agent reports and unverified host activation. Tests do not establish reader comprehension or real research effects.
+[Validation](docs/validation.md) separates deterministic tests, native Host inventory, source-directed Agent tasks and unverified activation layers. [Executable Host trials](evals/host-trials.md) prepare A/B/C/D tasks, a negative-trigger case, controls and continuation checks. Tests do not establish reader comprehension or real research effects.
 
 For a source ZIP, review and stage the intended files, then run `python3 -B tools/package.py --output /absolute/outside-repository/openbound-source.zip`. Packaging selects tracked allowed files, preserves modes and writes the manifest only inside the ZIP. After extraction run `python3 -B tools/check_package.py --manifest`.
 

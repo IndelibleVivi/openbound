@@ -2,6 +2,10 @@
 
 本文件定义可执行的行为验收协议，不是已通过的结果。确定性单元测试、合成 Dogfood、真实 Agent 执行与 Host 隐式激活是不同证据，分别记录。已报告的实际观察见 [验证记录](../docs/validation.md)，每次新运行须保留对应证据。
 
+跨 Harness 的可执行准备、独立产物检查、观察格式与恢复命令见
+[host-trials.md](host-trials.md)。`tools/host_trials.py` 复用现有夹具与验证引擎，
+不启动模型、不改权限，也不把 Host 的发现、激活和最终成果合并为一个通过标记。
+
 ## 给被测 Agent 的材料
 
 每个场景有一份 `*.prompt.md` 和一份 `*.review.md`。前者是正常用户任务；后者含评价标准、隐藏种子与后续扰动，只给运行器/评审者。被测 Agent 只能访问本轮干净 case root、Skill source 和 prompt；不要将上一轮诊断、预期答案、评审文件或其他 Agent 的产物送入其上下文。

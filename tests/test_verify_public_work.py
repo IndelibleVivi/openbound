@@ -316,6 +316,89 @@ class VerificationTests(unittest.TestCase):
         self.assertEqual(proc.returncode, 2)
         self.assertIn('unsafe_or_oversize_json', proc.stdout)
 
+    def test_candidate_symlink_is_refused_before_resolution(self):
+        alias = self.base / 'candidate-alias'
+        alias.symlink_to(self.candidate, target_is_directory=True)
+        self.plan()
+        self.error('unsafe_or_missing_directory',
+                   lambda: v.check(alias, self.contract, self.receipt, False))
+        self.assertFalse(self.receipt.exists())
+
+    def test_candidate_symlink_ancestor_is_refused(self):
+        alias = self.base / 'parent-alias'
+        alias.symlink_to(self.base, target_is_directory=True)
+        self.plan()
+        self.error('unsafe_or_missing_directory',
+                   lambda: v.check(alias / 'candidate', self.contract, self.receipt, False))
+        self.assertFalse(self.receipt.exists())
+
+    def test_contract_and_receipt_symlink_ancestors_are_refused(self):
+        alias = self.base / 'parent-alias'
+        alias.symlink_to(self.base, target_is_directory=True)
+        self.plan()
+        for contract, receipt in ((alias / 'contract.json', self.receipt),
+                                  (self.contract, alias / 'receipt.json')):
+            with self.subTest(contract=contract.name, receipt_parent=receipt.parent.name):
+                self.error('unsafe_or_missing_directory',
+                           lambda: v.check(self.candidate, contract, receipt, False))
+                self.assertFalse(self.receipt.exists())
+
+    def test_status_refuses_symlinked_candidate_and_control_paths(self):
+        self.plan()
+        self.run_check(False)
+        alias = self.base / 'parent-alias'
+        alias.symlink_to(self.base, target_is_directory=True)
+        for candidate, contract, receipt in ((alias / 'candidate', self.contract, self.receipt),
+                                            (self.candidate, alias / 'contract.json', self.receipt),
+                                            (self.candidate, self.contract, alias / 'receipt.json')):
+            with self.subTest(candidate=candidate, contract=contract, receipt=receipt):
+                self.error('unsafe_or_missing_directory', lambda: v.status(candidate, contract, receipt))
+
+    def test_reviewed_execution_path_supports_direct_and_nested_commands(self):
+        programs = self.base / 'reviewed-bin'
+        programs.mkdir()
+        command = programs / 'openbound-review-fixture'
+        command.write_text('#!/bin/sh\nprintf 37\n')
+        command.chmod(0o755)
+        self.plan([
+            {'id': 'direct', 'argv': [command.name], 'stdout_json_equals': 37},
+            self.command("import subprocess; subprocess.run(['openbound-review-fixture'], check=True)",
+                         stdout_json_equals=37)])
+        contract = json.loads(self.contract.read_text())
+        contract['execution_path'] = [str(programs)]
+        self.contract.write_text(json.dumps(contract))
+        self.assertTrue(self.run_check()['all_requested_checks_passed'])
+        command.write_text('#!/bin/sh\nprintf 8\n')
+        self.assertFalse(v.status(self.candidate, self.contract, self.receipt)['fresh'])
+
+    def test_ambient_path_is_not_inherited(self):
+        programs = self.base / 'ambient-bin'
+        programs.mkdir()
+        command = programs / 'openbound-ambient-fixture'
+        command.write_text('#!/bin/sh\nexit 0\n')
+        command.chmod(0o755)
+        self.plan([{'id': 'ambient', 'argv': [command.name]}])
+        with mock.patch.dict(os.environ, {'PATH': str(programs) + os.pathsep + os.environ['PATH']}):
+            self.assertFalse(self.run_check()['all_requested_checks_passed'])
+        self.assertTrue(json.loads(self.receipt.read_text())['checks'][0]['launch_failed'])
+
+    def test_execution_path_requires_reviewed_absolute_directory_entries(self):
+        self.plan()
+        for value in ('/usr/bin', ['relative/bin'], [''], ['/usr/bin:/bin'], ['/tmp/../bin'], [37]):
+            with self.subTest(value=value):
+                self.contract.write_text(json.dumps({'schema': v.SCHEMA, 'execution_path': value}))
+                self.error('invalid_execution_path', lambda: self.run_check(False))
+        self.assertFalse(self.receipt.exists())
+
+    def test_internal_temporary_alias_is_resolved_without_accepting_candidate_alias(self):
+        temporary_root = self.base / 'temporary-root'
+        temporary_root.mkdir()
+        alias = self.base / 'temporary-alias'
+        alias.symlink_to(temporary_root, target_is_directory=True)
+        self.plan([self.command("print(37)", stdout_json_equals=37)])
+        with mock.patch.object(v.tempfile, 'gettempdir', return_value=str(alias)):
+            self.assertTrue(self.run_check()['all_requested_checks_passed'])
+
 
 if __name__ == "__main__":
     unittest.main()

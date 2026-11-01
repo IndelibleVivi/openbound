@@ -8,6 +8,7 @@ Outputs are bounded and represented by digests; no command output is printed.
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager
 import hashlib
 import importlib.util
 import json
@@ -25,7 +26,7 @@ import time
 
 SCHEMA = "openbound-verification/1"
 RECEIPT_SCHEMA = "openbound-verification-receipt/1"
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 MAX_FILE_BYTES = 64 * 1024 * 1024
 MAX_TREE_BYTES = 256 * 1024 * 1024
 MAX_OUTPUT_BYTES = 1024 * 1024
@@ -65,12 +66,48 @@ def decode_json(data: bytes):
                       parse_constant=lambda _: (_ for _ in ()).throw(ValueError()))
 
 
-def read_json(path: Path, limit: int = MAX_OUTPUT_BYTES):
+def _absolute(path: Path) -> Path:
+    # Do not resolve a symlink (or collapse '..' through one) before checking it.
+    value = os.fspath(path)
+    if '\0' in value or '..' in Path(value).parts:
+        raise WorkError("invalid_location")
+    return Path(os.path.abspath(value))
+
+
+@contextmanager
+def _directory(path: Path):
+    """Open a directory through plain ancestors, including the final component."""
+    path = _absolute(path)
+    if not all(hasattr(os, name) for name in ("O_NOFOLLOW", "O_DIRECTORY", "O_CLOEXEC")):
+        raise WorkError("secure_filesystem_unavailable")
+    flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
     descriptor = None
     try:
-        descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+        descriptor = os.open("/", flags)
+        for part in path.parts[1:]:
+            child = os.open(part, flags, dir_fd=descriptor)
+            os.close(descriptor)
+            descriptor = child
+    except OSError:
+        if descriptor is not None:
+            os.close(descriptor)
+        raise WorkError("unsafe_or_missing_directory") from None
+    try:
+        yield descriptor
+    finally:
+        if descriptor is not None:
+            os.close(descriptor)
+
+
+def read_json(path: Path, limit: int = MAX_OUTPUT_BYTES):
+    path = _absolute(path)
+    descriptor = None
+    try:
+        with _directory(path.parent) as parent:
+            descriptor = os.open(path.name, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK,
+                                 dir_fd=parent)
         before = os.fstat(descriptor)
-        if not stat.S_ISREG(before.st_mode) or before.st_size > limit:
+        if not stat.S_ISREG(before.st_mode) or before.st_nlink != 1 or before.st_size > limit:
             raise WorkError("unsafe_or_oversize_json")
         chunks = []
         count = 0
@@ -113,6 +150,9 @@ def snapshot_tree(root: Path) -> dict:
     """
     if root.is_symlink() or not root.is_dir():
         raise WorkError("candidate_not_plain_directory")
+    root = _absolute(root)
+    with _directory(root):
+        pass
     entries = []
     total = 0
     try:
@@ -168,8 +208,14 @@ def load_contract(path: Path) -> tuple[dict, str]:
     data, sha = read_json(path)
     if not isinstance(data, dict) or data.get("schema") != SCHEMA:
         raise WorkError("invalid_contract_schema")
-    if set(data) - {"schema", "checks", "witnesses", "inspection", "dependencies"}:
+    if set(data) - {"schema", "checks", "witnesses", "inspection", "dependencies", "execution_path"}:
         raise WorkError("unknown_contract_field")
+    paths = data.get("execution_path", [])
+    if not isinstance(paths, list) or len(paths) > 32 or any(
+        not isinstance(p, str) or not os.path.isabs(p) or '\0' in p
+        or os.pathsep in p or '..' in Path(p).parts or len(p) > 8192 for p in paths
+    ):
+        raise WorkError("invalid_execution_path")
     dependencies = data.get("dependencies", [])
     if not isinstance(dependencies, list) or len(dependencies) > 100 or any(
         not isinstance(p, str) or not os.path.isabs(p) or "\0" in p or len(p) > 8192 for p in dependencies
@@ -234,6 +280,11 @@ def load_contract(path: Path) -> tuple[dict, str]:
     return data, sha
 
 
+def execution_path(contract: dict) -> str:
+    """Only reviewed directories extend the default, never the ambient PATH."""
+    return os.pathsep.join([*contract.get("execution_path", []), os.defpath])
+
+
 def execution_identity(contract: dict, candidate: Path) -> dict:
     """Bind direct programs, runtime and explicit external files, not an entire OS."""
     records = []
@@ -270,7 +321,7 @@ def execution_identity(contract: dict, candidate: Path) -> dict:
         elif "/" in executable:
             resolved = executable if os.path.isabs(executable) else str(candidate / executable)
         else:
-            resolved = shutil.which(executable, path=os.defpath)
+            resolved = shutil.which(executable, path=execution_path(contract))
         if not resolved:
             # Preserve a real launch-failure observation instead of calling an
             # absent executable a successful/usable check.
@@ -284,6 +335,7 @@ def execution_identity(contract: dict, candidate: Path) -> dict:
         observe(path, "declared-dependency:" + str(index))
     return {"records": records, "python_version": sys.version,
             "platform": sys.platform,
+            "execution_path_sha256": digest(execution_path(contract).encode()),
             "scope": "direct-executables-runtime-absolute-file-arguments-declared-dependencies",
             "ambient_packages_services_and_hardware": "not_attested"}
 
@@ -329,12 +381,12 @@ def _stop(process: subprocess.Popen):
         pass
 
 
-def run_command(check: dict, work: Path, temp: Path) -> dict:
+def run_command(check: dict, work: Path, temp: Path, search_path: str = os.defpath) -> dict:
     argv = [sys.executable if a == "{python}" else a.replace("{candidate}", str(work))
             for a in check["argv"]]
     home = temp / "home"
     home.mkdir()
-    env = {"PATH": os.defpath, "HOME": str(home), "TMPDIR": str(temp),
+    env = {"PATH": search_path, "HOME": str(home), "TMPDIR": str(temp),
            "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8", "TZ": "UTC",
            "PYTHONDONTWRITEBYTECODE": "1", "PYTHONNOUSERSITE": "1",
            "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull,
@@ -438,7 +490,8 @@ def run_inspection(candidate: Path, settings: dict) -> dict:
         raise WorkError("indirect_git_worktree_requires_explicit_inspection")
     if settings.get("history_ref") or settings.get("candidate_ref"):
         raise WorkError("unversioned_candidate_has_no_history_or_ref")
-    with tempfile.TemporaryDirectory(prefix="openbound-inspection-") as directory:
+    with tempfile.TemporaryDirectory(prefix="openbound-inspection-",
+                                     dir=Path(tempfile.gettempdir()).resolve()) as directory:
         temp = Path(directory)
         work = temp / "candidate"
         template = temp / "empty-template"
@@ -535,9 +588,18 @@ def make_witnesses(contract: dict, checks: list) -> list:
     return results
 
 
-def status(candidate: Path, contract_path: Path, receipt_path: Path) -> dict:
+def _locations(candidate: Path, contract_path: Path, receipt_path: Path):
+    candidate, contract_path, receipt_path = map(_absolute, (candidate, contract_path, receipt_path))
+    for directory in (candidate, contract_path.parent, receipt_path.parent):
+        with _directory(directory):
+            pass
     _outside(contract_path, candidate)
     _outside(receipt_path, candidate)
+    return candidate, contract_path, receipt_path
+
+
+def status(candidate: Path, contract_path: Path, receipt_path: Path) -> dict:
+    candidate, contract_path, receipt_path = _locations(candidate, contract_path, receipt_path)
     contract, contract_sha = load_contract(contract_path)
     receipt, _ = read_json(receipt_path, MAX_RECEIPT_BYTES)
     validate_receipt(receipt, contract)
@@ -550,8 +612,7 @@ def status(candidate: Path, contract_path: Path, receipt_path: Path) -> dict:
 
 def check(candidate: Path, contract_path: Path, receipt_path: Path,
           execute_reviewed: bool = False) -> dict:
-    _outside(contract_path, candidate)
-    _outside(receipt_path, candidate)
+    candidate, contract_path, receipt_path = _locations(candidate, contract_path, receipt_path)
     contract, contract_sha = load_contract(contract_path)
     if receipt_path.exists() or receipt_path.is_symlink():
         previous = status(candidate, contract_path, receipt_path)
@@ -563,14 +624,14 @@ def check(candidate: Path, contract_path: Path, receipt_path: Path,
         raise WorkError("reviewed_execution_flag_required", 4)
     if os.name != "posix" and contract.get("checks"):
         raise WorkError("command_runner_requires_posix")
-    candidate = candidate.resolve()
     validate_git_boundary(candidate)
     before = snapshot_tree(candidate)
     tools_before = tool_identity()
     execution_before = execution_identity(contract, candidate)
     results = []
     for command in contract.get("checks", []):
-        with tempfile.TemporaryDirectory(prefix="openbound-check-") as directory:
+        with tempfile.TemporaryDirectory(prefix="openbound-check-",
+                                         dir=Path(tempfile.gettempdir()).resolve()) as directory:
             temp = Path(directory)
             work = temp / "candidate"
             try:
@@ -580,7 +641,7 @@ def check(candidate: Path, contract_path: Path, receipt_path: Path,
             if snapshot_tree(work)["sha256"] != before["sha256"]:
                 raise WorkError("verification_copy_mismatch", 3)
             validate_git_boundary(work)
-            observed = run_command(command, work, temp)
+            observed = run_command(command, work, temp, execution_path(contract))
             observed["input_sha256"] = before["sha256"]
             results.append(observed)
     inspection = run_inspection(candidate, contract.get("inspection", {}))
@@ -594,6 +655,7 @@ def check(candidate: Path, contract_path: Path, receipt_path: Path,
                "contract_sha256": contract_sha, "candidate_unchanged": True,
                "execution": {"workspace": "fresh_disposable_copy_per_check",
                              "environment": "minimal_no_inherited_credentials",
+                             "path": "reviewed_directories_then_os_default",
                              "os_sandbox": False, "network_restricted": False},
                "checks": results, "witnesses": make_witnesses(contract, results),
                "inspection": inspection, "inspection_sha256": digest(canonical(inspection)),
@@ -605,7 +667,10 @@ def check(candidate: Path, contract_path: Path, receipt_path: Path,
     try:
         # O_EXCL avoids clobbering old evidence. A partial write is invalid JSON and
         # fails closed; retain it for diagnosis and choose a new receipt path.
-        descriptor = os.open(receipt_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with _directory(receipt_path.parent) as parent:
+            descriptor = os.open(receipt_path.name,
+                                 os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
+                                 0o600, dir_fd=parent)
         with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
             handle.write(serialized.decode("ascii"))
             handle.flush()

@@ -27,19 +27,21 @@ OpenBound 是面向作者、研究者和开发者的 Agent Skill：从发展作�
 
 仓库为 `IndelibleVivi/openbound`，安装与更新见 [installation](docs/installation.md)。源码可见不代表授予通用使用许可；参见 [许可状态](LICENSE-STATUS.md)。
 
-在 Codex 中安装完整 Skill：
+Clone 仓库、审查选定版本后，把完整 Skill 安装到 Agent 工作的已有项目：
 
 ```bash
-python3 "${CODEX_HOME:-$HOME/.codex}/skills/.system/skill-installer/scripts/install-skill-from-github.py" \
-  --repo IndelibleVivi/openbound --path skills/openbound --name openbound --ref main --method download
+git clone https://github.com/IndelibleVivi/openbound.git
+cd openbound
+python3 -B tools/host_support.py install --host claude-code --root /absolute/work-project
+python3 -B tools/host_support.py doctor --host claude-code --root /absolute/work-project
 ```
 
-固定已审查版本、更新、其他 Host 与 discovery 见 [安装指南](docs/installation.md)。
+`--host` 可选 `codex`、`claude-code`、`opencode`、`pi`、`gemini-cli`、`cursor`，均复制同一份权威正文与资源。固定版本、更新与原生调用见 [安装指南](docs/installation.md)；权限和降级语义见 [跨 Host 契约](docs/host-compatibility.md)。检测不会修改 Host 配置，也不把文件存在视为激活成功。
 
 安装单元为 [skills/openbound/](skills/openbound/SKILL.md)。在支持 Agent Skills 的 Host 中加载它，例如：
 
 ```text
-使用 $openbound，把这个已经完成的私人项目准备成完整公共候选。
+使用 OpenBound，把这个已经完成的私人项目准备成完整公共候选。
 保留现有功能、测试和文档，处理私人配置和实际会公开的历史。
 完成本地验证；远端动作沿用本次任务已有的授权。
 ```
@@ -75,6 +77,8 @@ python3 -B tools/validate.py
 ```
 
 它检查结构与本地链接、运行全套 unittest（含四类确定性 E2E），并验证异地复制后的 Skill CLI。入口在仓库外选择实体临时目录，保留产品的 no-follow 边界。额外的 Skill authoring 检查可运行 `skill-validate skills/openbound`；这项检查不是产品运行依赖。
+
+[跨 Host 行为验收](evals/host-trials.md) 提供真实 Agent 的任务准备、产物检查、无 Skill 对照、负向触发及中断恢复命令。确定性结果、原生发现、显式加载、隐式激活与完整成果分别报告；实际观察见 [验证记录](docs/validation.md)。
 
 若需要保留四份完整 synthetic 候选与私人回执用于检查，运行：
 

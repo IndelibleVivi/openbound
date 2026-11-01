@@ -78,6 +78,20 @@ class ScannerRegressions(unittest.TestCase):
         blob = hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
         self.assertEqual(blob, "a590ed0565b80da0d417657de456d025879fb938")
 
+    def test_requested_repository_symlink_is_refused_before_resolution(self) -> None:
+        alias = self.base / 'candidate-alias'
+        alias.symlink_to(self.repo, target_is_directory=True)
+        result = self.run_scan('--candidate', 'none', '--candidate-ref', 'HEAD', repo=alias)
+        self.assertEqual(result.returncode, 2)
+        self.assertNotIn(str(alias), result.stdout + result.stderr)
+
+    def test_requested_repository_symlink_ancestor_is_refused(self) -> None:
+        alias = self.base / 'parent-alias'
+        alias.symlink_to(self.base, target_is_directory=True)
+        result = self.run_scan(repo=alias / 'candidate')
+        self.assertEqual(result.returncode, 2)
+        self.assertNotIn(str(alias), result.stdout + result.stderr)
+
     def test_commit_message_gap_is_fixed_against_baseline(self) -> None:
         self.write("README.md", "# Updated complete project\n")
         self.commit("private note " + TOKEN)

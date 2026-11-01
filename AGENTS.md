@@ -22,6 +22,8 @@ installation or update; do not hot-edit an installed copy.
 | `tests/`, `tools/fixture_factory.py`, `tools/run_scenarios.py` | Synthetic behavioral checks and deterministic scenarios |
 | `evals/` | Task prompts and evaluator-only reviews; never give both to a subject |
 | `tools/validate.py` | Provider-neutral verification owner; CI invokes this entry |
+| `tools/host_support.py`, `docs/host-compatibility.md` | Thin install profiles, complete-unit parity and capability reporting; no Host policy changes |
+| `tools/host_trials.py`, `evals/host-trials.md` | Comparable subject fixtures, evaluator-only evidence, outcome checks and recovery; no model launcher |
 | `docs/architecture-model.json` | Editable diagram model; renderer generates SVG and Excalidraw |
 | `README.md`, `ENGINEERING_DESIGN.md` | Supported use and design/protocol contracts |
 | `docs/current-state.md`, `docs/validation.md` | Volatile delivery facts and bounded observed evidence |
@@ -64,6 +66,13 @@ Unified diff context contains significant single-space blank lines; the scoped
 Real model evaluations need their own explicit scope/authorization. Deterministic
 fixtures, prior reported Agent trials, source-directed trials, installed discovery,
 implicit activation and human comprehension must never be reported as equivalent.
+
+Keep the core Host-neutral. Native invocation and permission differences live in
+integration guidance, not competing Skill bodies. Host inventory must identify
+the exact name and selected payload path; exit zero alone is insufficient. Record
+version, runtime surface, trust state and the evidence layer actually observed.
+Raw trials, Host installs and traces stay outside the source tree. Never grant
+trust, change tool policy or enable bypass flags merely to make a trial pass.
 
 Update README for changed usage/support/privacy; AGENTS for canonical paths and
 gates; current-state for source/installation/remote status; installation for install

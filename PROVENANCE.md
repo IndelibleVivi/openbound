@@ -4,6 +4,8 @@ OpenBound's inspector extends an earlier implementation by the same maintainer. 
 
 Eleven original test scenarios are retained, with installation-path and stricter output-boundary expectations adjusted. Added regressions cover metadata, shallow history, LFS, coverage, identity and execution boundaries. The implementation is an extension, not a claim of development from scratch or a complete secret-scanning product.
 
+The current patch also retains plain-directory traversal for the requested repository root and its ancestors. Regression cases exercise direct repository aliases and parent-directory aliases before Git lookup, including ref-only inspection; resolving an alias is not treated as evidence that the caller supplied a plain path.
+
 Fixtures are synthetic; their identities, domains, paths and token shapes are test inputs. Deterministic tests, reported Agent trials and host activation are separate evidence layers; see [validation](docs/validation.md). Private execution traces are excluded.
 
 Existing rights remain applicable. Fixture MIT notices apply only to their fixtures; see [license status](LICENSE-STATUS.md). ZIP manifests establish payload bytes, not authorship, rights or safety.
